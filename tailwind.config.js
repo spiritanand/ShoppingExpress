@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  purge   : ['./views/*.html'], // Paths to HTML and JS files to scan for used classes
-  darkMode: false,
+  content : ['./views/**/*.ejs'],
+  darkMode: 'media',
   theme   : {
 	extend: {
 	  colors    : {
@@ -27,6 +27,4 @@ module.exports = {
 	extend: {},
   },
   plugins : [],
-  content : ['./views/*.html'],
-  
 };

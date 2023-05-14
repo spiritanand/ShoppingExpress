@@ -1,10 +1,16 @@
 const express = require('express');
-const path = require('path')
+const bodyParser = require('body-parser');
+// const path = require('path');
 
 const router = express.Router();
+router.use(bodyParser.urlencoded({extended: true}));
 
 router.get('/products', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'views', 'add-product.html'));
+  res.render('add-product', {
+	title: 'Add Products',
+	path : '/admin/products'
+  });
+  // res.sendFile(path.join(__dirname, '..', 'views', 'add-product.html'));
 });
 
 router.post('/products', (req, res) => {
