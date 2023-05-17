@@ -17,3 +17,8 @@ input {
     justify-content: center;
     align-items: center;
 }
+
+.product-image {
+    max-height: 200px;
+    object-fit: contain;
+}

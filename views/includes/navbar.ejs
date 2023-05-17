@@ -1,23 +1,38 @@
 <header>
-	<nav class = "bg-gray-800 py-4">
-		<div class = "container mx-auto flex items-center justify-between px-4">
-			<div>
-				<a href = "/"
-					 class = "text-white text-2xl font-bold hover:text-primary"
-				>Shopping Express</a>
-			</div>
-			<div>
-				<a href = "/"
-					 class = "px-4 hover:text-primary <%= path === "/home"
-																								? "text-primary"
-																								: "text-white" %>"
-				>Home</a>
-				<a href = "/admin/products"
-					 class = "px-4 hover:text-primary <%= path === "/admin/products"
-																								? "text-primary"
-																								: "text-white" %>"
-				>Add</a>
+	<nav class = "bg-gray-900">
+		<div class = "container mx-auto px-4">
+			<div class = "flex items-center justify-between h-16">
+				<div class = "flex items-center">
+					<a href = "/" class = "hover:text-primary font-bold text-3xl <%= path === "/home"
+																					 ? "text-primary"
+																					 : "text-white" %>"
+					>
+						<span class = "hidden md:flex">Shopping Express</span>
+						<span class = "flex md:hidden">SE</span>
+					</a>
+				</div>
+				<!-- Menu Links (visible on desktop) -->
+				<div class = "flex">
+					<a href = "/" class = "hover:text-primary px-3 py-2 <%= path === "/home"
+																			? "text-primary"
+																			: "text-gray-300" %>"
+					>Home</a>
+					<a href = "/cart" class = "hover:text-primary px-3 py-2 <%= path === "/cart"
+																				? "text-primary"
+																				: "text-gray-300" %>"
+					>Cart</a>
+					<a href = "/admin/add-product"
+					   class = "hover:text-primary px-3 py-2 <%= path === "/admin/add-product"
+																 ? "text-primary"
+																 : "text-gray-300" %>"
+					>Add</a>
+					<a href = "/admin/products" class = "hover:text-primary px-3 py-2 <%= path === "/admin/products"
+																						  ? "text-primary"
+																						  : "text-gray-300" %>"
+					>Products</a>
+				</div>
 			</div>
 		</div>
 	</nav>
+
 </header>

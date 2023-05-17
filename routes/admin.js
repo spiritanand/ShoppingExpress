@@ -3,13 +3,15 @@ const bodyParser = require('body-parser');
 const {
 	getAddProducts,
 	postAddProducts,
-} = require('../controllers/products');
+} = require('../controllers/admin');
 
 const router = express.Router();
-router.use(bodyParser.urlencoded({extended: true}));
+router.use(bodyParser.urlencoded({ extended : true }));
 
-router.get('/products', getAddProducts);
+router.get('/add-product', getAddProducts);
 
-router.post('/products', postAddProducts);
+router.post('/add-product', postAddProducts);
+
+router.get('products');
 
 module.exports = router;
