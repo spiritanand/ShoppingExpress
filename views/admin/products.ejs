@@ -1,0 +1,40 @@
+<%- include('../includes/head.ejs') %>
+</head>
+
+<body class = "bg-gray-200">
+<%- include('../includes/navbar.ejs') %>
+<main class = "container mx-auto py-8 min-h-screen">
+	<% if(products?.length > 0) { %>
+		<h1 class = "text-3xl font-bold mb-4">Products</h1>
+
+		<div class = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+			<% products?.forEach(product => { %>
+				<div class = "bg-white rounded-lg shadow-lg p-6">
+					<div class = "flex flex-col items-center mb-4">
+						<h2 class = "text-lg font-bold mb-2"><%= product?.name %></h2>
+						<img class = "w-full h-auto mb-2 product-image" src = "<%= product?.imageURL %>"
+							 alt = "<%= product?.name %>"
+						/>
+						<p class = "text-gray-600 mb-2">Price: $<%= product?.price %></p>
+						<div class = "flex gap-5">
+							<a href = "/admin/edit-product">
+								<button class = "bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300 ease-in-out">
+									Edit
+								</button>
+							</a>
+							<form action = "/admin/delete-product" method = "POST">
+								<button class = "bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300 ease-in-out" type="submit">
+									Delete
+								</button>
+							</form>
+						</div>
+					</div>
+					<p class = "text-gray-600">Quantity Left: <%= product?.quantity %></p>
+				</div>
+			<% }); %>
+		</div>
+	<% } else { %>
+		<h1 class = "text-3xl font-bold mb-4">No Products</h1>
+	<% } %>
+</main>
+<%- include('../includes/end.ejs') %>
