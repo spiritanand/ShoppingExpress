@@ -13,11 +13,7 @@
 				/>
 			</a>
 			<p class = "text-gray-600 mb-2">Price: $<%= product?.price; %></p>
-			<p class = "text-gray-700 mt-4 mb-6 text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-															 Sed at
-															 lectus hendrerit, consectetur neque id, interdum tellus.
-															 Integer
-															 luctus orci vitae felis dignissim posuere.</p>
+			<p class = "text-gray-700 mt-4 mb-6 text-center"><%= product?.description %></p>
 			<form action = "/cart" method = "POST">
 				<%- include('../includes/add-to-cart.ejs', {product}) %>
 			</form>

@@ -1,4 +1,6 @@
 const Product = require('../models/product');
+const Cart = require('../models/cart');
+const getExistingItem = require('../utils/getExisitingItem');
 
 exports.getProducts = (req, res) => {
 	Product.fetchAll(products => {
@@ -23,17 +25,32 @@ exports.getProductDetail = (req, res) => {
 };
 
 exports.getCart = (req, res) => {
-	res.render('shop/cart', {
-		title : 'Shopping Cart',
-		path : '/cart',
-		cart : [],
+	Cart.fetchCart(cart => {
+		Product.fetchAll(products => {
+			let enrichedCart;
+			for (product of products) {
+				const {
+					existingItemIndex,
+					existingItem,
+				} = getExistingItem(cart.products, product.id);
+				// if (existingItemIndex >= 0)
+			}
+
+			res.render('shop/cart', {
+				title : 'Shopping Cart',
+				path : '/cart',
+				cart,
+			});
+		});
 	});
 };
 
 exports.postCart = (req, res) => {
 	const id = req.body?.productId;
-	console.log({ id });
-	res.redirect('/cart');
+	Product.fetchById(id, product => {
+		Cart.addProduct(id, product.price);
+		res.redirect('/cart');
+	});
 };
 
 exports.getCheckout = (req, res) => {
