@@ -91,6 +91,26 @@ module.exports = class Cart {
 		});
 	}
 
+	static updateTotal(id, updatedPrice) {
+		getCartFromFile(cart => {
+			const {
+				existingItem,
+				existingItemIndex,
+			} = getExisitingItem(cart.products, id);
+
+			if (existingItemIndex < 0) return;
+
+			cart.total -= +existingItem.price * existingItem.quantity;
+			cart.total += +updatedPrice * existingItem.quantity;
+			cart.products[existingItemIndex] = {
+				...cart.products[existingItemIndex],
+				price : updatedPrice,
+			};
+
+			writeCart(cart);
+		});
+	}
+
 	static fetchCart(cb) {
 		getCartFromFile(cb);
 	}

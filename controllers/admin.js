@@ -2,6 +2,7 @@ const Product = require('../models/product');
 const {
 	render404View,
 } = require('./error');
+const Cart = require('../models/cart');
 
 exports.getAddProduct = (req, res) => {
 	res.render('admin/edit-product', {
@@ -52,6 +53,7 @@ exports.postEditProduct = (req, res) => {
 	} = req.body;
 	const product = new Product(name, imageURL, price, quantity, description, id);
 	product.save();
+	Cart.updateTotal(id, price);
 	res.redirect(`/products/${id}`);
 };
 

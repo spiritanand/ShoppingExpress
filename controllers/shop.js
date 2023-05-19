@@ -27,19 +27,22 @@ exports.getProductDetail = (req, res) => {
 exports.getCart = (req, res) => {
 	Cart.fetchCart(cart => {
 		Product.fetchAll(products => {
-			let enrichedCart;
+			let enrichedCart = { ...cart };
 			for (product of products) {
 				const {
 					existingItemIndex,
-					existingItem,
-				} = getExistingItem(cart.products, product.id);
-				// if (existingItemIndex >= 0)
+				} = getExistingItem(cart?.products, product?.id);
+				if (existingItemIndex >= 0)
+					enrichedCart.products[existingItemIndex] = {
+						...enrichedCart.products[existingItemIndex],
+						product,
+					};
 			}
 
 			res.render('shop/cart', {
 				title : 'Shopping Cart',
 				path : '/cart',
-				cart,
+				cart : enrichedCart,
 			});
 		});
 	});

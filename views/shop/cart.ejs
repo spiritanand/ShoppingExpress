@@ -28,6 +28,13 @@
 						<!-- Cart Item -->
 						<li class = "flex flex-col md:flex-row items-center justify-around py-4 border-b">
 							<div class = "flex flex-col md:flex-row items-center justify-center gap-4">
+								<img class = "h-24 w-auto object-contain" src = "<%= product.product.imageURL; %>"
+									 alt = "Product Image"
+								>
+								<div class = "ml-4">
+									<p class = "font-semibold"><%= product.product.name; %></p>
+									<p class = "text-sm text-gray-500">Unit Price: $<%= product.product.price; %></p>
+								</div>
 							</div>
 							<div class = "flex items-center">
 								<button class = "text-red-500 focus:outline-none p-2">
