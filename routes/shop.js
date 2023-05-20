@@ -4,7 +4,9 @@ const {
 	getCart,
 	getCheckout,
 	getProductDetail,
-	postCart,
+	postAddToCart,
+	postRemoveProductFromCart,
+	postDecreaseProductFromCart,
 } = require('../controllers/shop');
 const bodyParser = require('body-parser');
 // const path = require('path');
@@ -19,7 +21,11 @@ router.get('/', getProducts);
 router.get('/products/:productId', getProductDetail);
 
 router.get('/cart', getCart);
-router.post('/cart', postCart);
+router.post('/cart', postAddToCart);
+
+router.post('/cart/add', postAddToCart);
+router.post('/cart/decrease', postDecreaseProductFromCart);
+router.post('/cart/remove', postRemoveProductFromCart);
 
 router.get('checkout', getCheckout);
 

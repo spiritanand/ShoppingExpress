@@ -30,9 +30,12 @@ module.exports = class Cart {
 			if (!err) cart = JSON.parse(data);
 
 			// 	analyze cart
-			const existingProductIndex = cart.products.findIndex(item => item.id === id);
-			const existingProduct = cart.products[existingProductIndex];
+			const {
+				existingItemIndex : existingProductIndex,
+				existingItem : existingProduct,
+			} = getExisitingItem(cart?.products, id);
 			let updatedProduct;
+
 			if (existingProduct) {
 				// increase by 1 if product exists
 				updatedProduct = {
@@ -66,6 +69,8 @@ module.exports = class Cart {
 				existingItem : existingProduct,
 			} = getExisitingItem(cart?.products, id);
 
+			if (existingProductIndex < 0) return;
+
 			cart?.products?.splice(existingProductIndex, 1);
 			cart.total -= +productPrice * +existingProduct?.quantity;
 
@@ -79,6 +84,8 @@ module.exports = class Cart {
 				existingItemIndex : existingProductIndex,
 				existingItem : existingProduct,
 			} = getExisitingItem(cart?.products, id);
+
+			if (existingProductIndex < 0) return;
 
 			if (existingProduct.quantity === 1)
 				return this.removeProduct(id, productPrice);
