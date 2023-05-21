@@ -2,6 +2,7 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 const getExistingItem = require('../utils/getExisitingItem');
 
+// Shows the homepage
 exports.getProducts = (req, res) => {
 	Product.fetchAll(products => {
 		res.render('shop/index', {
