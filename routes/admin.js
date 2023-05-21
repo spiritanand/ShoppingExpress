@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const {
   getAddProduct,
   postAddProduct,
@@ -10,8 +9,6 @@ const {
 } = require('../controllers/admin');
 
 const router = express.Router();
-
-router.use(bodyParser.urlencoded({extended: true}));
 
 router.get('/add-product', getAddProduct);
 router.post('/add-product', postAddProduct);

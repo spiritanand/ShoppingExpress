@@ -4,25 +4,29 @@ const getExistingItem = require('../utils/getExisitingItem');
 
 // Shows the homepage
 exports.getProducts = (req, res) => {
-  Product.fetchAll(products => {
-    res.render('shop/index', {
-      title: 'Shopping Express',
-      path: '/home',
-      products,
-    });
-  });
+  Product.fetchAll()
+    .then(([rows]) => {
+      res.render('shop/index', {
+        title: 'Shopping Express',
+        path: '/home',
+        products: rows,
+      });
+    })
+    .catch(err => console.log(err));
 };
 
 exports.getProductDetail = (req, res) => {
   const id = req.params.productId;
-  Product.fetchById(id, product => {
-    console.log({product});
-    res.render('shop/product-detail', {
-      title: `Product Detail - ${product.name}`,
-      path: '/product-item',
-      product,
-    });
-  });
+  Product.fetchById(id)
+    .then(([rows]) => {
+      const product = rows[0];
+      res.render('shop/product-detail', {
+        title: `Product Detail - ${product?.name}`,
+        path: '/product-item',
+        product,
+      });
+    })
+    .catch(err => console.log(err));
 };
 
 exports.getCart = (req, res) => {

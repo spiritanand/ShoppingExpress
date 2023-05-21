@@ -8,11 +8,9 @@ const {
   postRemoveProductFromCart,
   postDecreaseProductFromCart,
 } = require('../controllers/shop');
-const bodyParser = require('body-parser');
 // const path = require('path');
 
 const router = express.Router();
-router.use(bodyParser.urlencoded({extended: true}));
 
 router.get('/', getProducts);
 // res.sendFile(path.join(__dirname, '..','views', 'index.html')); // sending
