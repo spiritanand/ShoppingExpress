@@ -1,12 +1,12 @@
 const fs = require('fs');
 const path = require('path');
-const {rootPath} = require('../utils/path');
+const { rootPath } = require('../utils/path');
 const Product = require('./product');
 const getExisitingItem = require('../utils/getExisitingItem');
 
 const cartPath = path.join(rootPath, 'data', 'cart.json');
 
-const getCartFromFile = cb => {
+const getCartFromFile = (cb) => {
   fs.readFile(cartPath, (err, data) => {
     if (err) return cb({});
 
@@ -15,7 +15,7 @@ const getCartFromFile = cb => {
 };
 
 function writeCart(cart) {
-  fs.writeFile(cartPath, JSON.stringify(cart), err => console.log(err));
+  fs.writeFile(cartPath, JSON.stringify(cart), (err) => console.log(err));
 }
 
 module.exports = class Cart {
@@ -29,8 +29,10 @@ module.exports = class Cart {
       if (!err) cart = JSON.parse(data);
 
       // 	analyze cart
-      const {existingItemIndex: existingProductIndex, existingItem: existingProduct} =
-        getExisitingItem(cart?.products, id);
+      const {
+        existingItemIndex: existingProductIndex,
+        existingItem: existingProduct,
+      } = getExisitingItem(cart?.products, id);
       let updatedProduct;
 
       if (existingProduct) {
@@ -60,9 +62,11 @@ module.exports = class Cart {
   }
 
   static removeProduct(id, productPrice) {
-    getCartFromFile(cart => {
-      const {existingItemIndex: existingProductIndex, existingItem: existingProduct} =
-        getExisitingItem(cart?.products, id);
+    getCartFromFile((cart) => {
+      const {
+        existingItemIndex: existingProductIndex,
+        existingItem: existingProduct,
+      } = getExisitingItem(cart?.products, id);
 
       if (existingProductIndex < 0) return;
 
@@ -74,13 +78,16 @@ module.exports = class Cart {
   }
 
   static decreaseProduct(id, productPrice) {
-    getCartFromFile(cart => {
-      const {existingItemIndex: existingProductIndex, existingItem: existingProduct} =
-        getExisitingItem(cart?.products, id);
+    getCartFromFile((cart) => {
+      const {
+        existingItemIndex: existingProductIndex,
+        existingItem: existingProduct,
+      } = getExisitingItem(cart?.products, id);
 
       if (existingProductIndex < 0) return;
 
-      if (existingProduct.quantity === 1) return this.removeProduct(id, productPrice);
+      if (existingProduct.quantity === 1)
+        return this.removeProduct(id, productPrice);
 
       existingProduct.quantity -= 1;
       cart.products[existingProductIndex] = existingProduct;
@@ -91,8 +98,11 @@ module.exports = class Cart {
   }
 
   static updateTotal(id, updatedPrice) {
-    getCartFromFile(cart => {
-      const {existingItem, existingItemIndex} = getExisitingItem(cart.products, id);
+    getCartFromFile((cart) => {
+      const { existingItem, existingItemIndex } = getExisitingItem(
+        cart.products,
+        id
+      );
 
       if (existingItemIndex < 0) return;
 

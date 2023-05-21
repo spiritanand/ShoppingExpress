@@ -4,15 +4,13 @@ const getExistingItem = require('../utils/getExisitingItem');
 
 // Shows the homepage
 exports.getProducts = (req, res) => {
-  Product.fetchAll()
-    .then(([rows]) => {
-      res.render('shop/index', {
-        title: 'Shopping Express',
-        path: '/home',
-        products: rows,
-      });
-    })
-    .catch(err => console.log(err));
+  Product.fetchAll().then(([rows]) => {
+    res.render('shop/index', {
+      title: 'Shopping Express',
+      path: '/home',
+      products: rows,
+    });
+  });
 };
 
 exports.getProductDetail = (req, res) => {
@@ -26,15 +24,18 @@ exports.getProductDetail = (req, res) => {
         product,
       });
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 exports.getCart = (req, res) => {
-  Cart.fetchCart(cart => {
-    Product.fetchAll(products => {
-      let enrichedCart = {...cart};
-      for (product of products) {
-        const {existingItemIndex} = getExistingItem(cart?.products, product?.id);
+  Cart.fetchCart((cart) => {
+    Product.fetchAll((products) => {
+      const enrichedCart = { ...cart };
+      for (const product of products) {
+        const { existingItemIndex } = getExistingItem(
+          cart?.products,
+          product?.id
+        );
         if (existingItemIndex >= 0)
           enrichedCart.products[existingItemIndex] = {
             ...enrichedCart.products[existingItemIndex],
@@ -53,7 +54,7 @@ exports.getCart = (req, res) => {
 
 exports.postAddToCart = (req, res) => {
   const id = req.body?.productId;
-  Product.fetchById(id, product => {
+  Product.fetchById(id, (product) => {
     Cart.addProduct(id, product.price);
     res.redirect('/cart');
   });
@@ -61,7 +62,7 @@ exports.postAddToCart = (req, res) => {
 
 exports.postDecreaseProductFromCart = (req, res) => {
   const id = req.body?.productId;
-  Product.fetchById(id, product => {
+  Product.fetchById(id, (product) => {
     Cart.decreaseProduct(id, product.price);
     res.redirect('/cart');
   });
@@ -69,7 +70,7 @@ exports.postDecreaseProductFromCart = (req, res) => {
 
 exports.postRemoveProductFromCart = (req, res) => {
   const id = req.body?.productId;
-  Product.fetchById(id, product => {
+  Product.fetchById(id, (product) => {
     Cart.removeProduct(id, product.price);
     res.redirect('/cart');
   });

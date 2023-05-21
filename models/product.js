@@ -1,11 +1,11 @@
+const { v4: uuidv4 } = require('uuid');
 const sqlDb = require('../utils/database');
-const {v4: uuidv4} = require('uuid');
 const Cart = require('./cart');
 const getExistingItem = require('../utils/getExisitingItem');
 
 const getProductsFromDb = () => {};
 
-const writeProducts = products => {};
+const writeProducts = (products) => {};
 
 module.exports = class Product {
   constructor(name, imageURL, price, quantity, description, id = null) {

@@ -3,10 +3,10 @@ const path = require('path');
 
 require('dotenv').config();
 
+const bodyParser = require('body-parser');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-const {get404} = require('./controllers/error');
-const bodyParser = require('body-parser');
+const { get404 } = require('./controllers/error');
 
 const app = express();
 
@@ -14,7 +14,7 @@ const app = express();
 app.set('view engine', 'ejs');
 // app.set('views', 'views'); // set automatically. no need to call explicitly
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));

@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-const {render404View} = require('./error');
+const { render404View } = require('./error');
 const Cart = require('../models/cart');
 
 exports.getAddProduct = (req, res) => {
@@ -12,20 +12,20 @@ exports.getAddProduct = (req, res) => {
 };
 
 exports.postAddProduct = (req, res) => {
-  const {name, imageURL, price, quantity, description} = req.body;
+  const { name, imageURL, price, quantity, description } = req.body;
   const product = new Product(name, imageURL, price, quantity, description);
   product
     .save()
     .then(() => {
       res.redirect('/');
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 exports.getEditProduct = (req, res) => {
   const id = req.params?.productId;
   const editMode = Boolean(req.query?.edit);
-  Product.fetchById(id, product => {
+  Product.fetchById(id, (product) => {
     if (!product || !editMode) return render404View(res);
 
     res.render('admin/edit-product', {
@@ -38,7 +38,7 @@ exports.getEditProduct = (req, res) => {
 };
 
 exports.postEditProduct = (req, res) => {
-  const {id, name, imageURL, price, quantity, description} = req.body;
+  const { id, name, imageURL, price, quantity, description } = req.body;
   const product = new Product(name, imageURL, price, quantity, description, id);
   product.save();
   Cart.updateTotal(id, price);
@@ -60,5 +60,5 @@ exports.getProducts = (req, res) => {
         products: rows,
       });
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
