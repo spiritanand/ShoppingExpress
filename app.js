@@ -1,5 +1,7 @@
 const express = require('express');
 const path = require('path');
+require('dotenv').config();
+const sqlDb = require('./utils/database');
 
 const app = express();
 
@@ -9,13 +11,13 @@ app.set('view engine', 'ejs');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-const { get404 } = require('./controllers/error');
+const {get404} = require('./controllers/error');
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 // handling routes
-// place more specific routes on the top always
+// always place more specific routes on the top
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
