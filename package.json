@@ -1,35 +1,36 @@
 {
-  "name": "shopping-express",
-  "version": "1.0.0",
-  "description": "Basic express e-commerce app",
-  "main": "app.js",
-  "scripts": {
-    "start": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "npx eslint .",
-    "lint:fix": "npx eslint . --fix",
-    "prettier" : "npx prettier --write ."
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "body-parser": "^1.20.2",
-    "dotenv": "^16.0.3",
-    "ejs": "^3.1.9",
-    "express": "^4.18.2",
-    "mysql2": "^3.3.1",
-    "uuid": "^9.0.0"
-  },
-  "devDependencies": {
-    "eslint": "^8.41.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-node": "^4.1.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.8",
-    "tailwindcss": "^3.3.2"
-  }
+	"name": "shopping-express",
+	"version": "1.0.0",
+	"description": "Basic express e-commerce app",
+	"main": "app.js",
+	"scripts": {
+		"start": "nodemon app.js",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"lint": "npx eslint .",
+		"lint:fix": "npx eslint . --fix",
+		"prettier": "npx prettier --write ."
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"body-parser": "^1.20.2",
+		"dotenv": "^16.0.3",
+		"ejs": "^3.1.9",
+		"express": "^4.18.2",
+		"mysql2": "^3.3.1",
+		"sequelize": "^6.31.1",
+		"uuid": "^9.0.0"
+	},
+	"devDependencies": {
+		"eslint": "^8.41.0",
+		"eslint-config-airbnb-base": "^15.0.0",
+		"eslint-config-node": "^4.1.0",
+		"eslint-config-prettier": "^8.8.0",
+		"eslint-plugin-import": "^2.27.5",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-prettier": "^4.2.1",
+		"prettier": "^2.8.8",
+		"tailwindcss": "^3.3.2"
+	}
 }

@@ -1,36 +1,29 @@
-const { v4: uuidv4 } = require('uuid');
-const sqlDb = require('../utils/database');
-const Cart = require('./cart');
-const getExistingItem = require('../utils/getExisitingItem');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../utils/database');
 
-const getProductsFromDb = () => {};
+const Product = sequelize.define('product', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  price: {
+    type: DataTypes.DOUBLE,
+    allowNull: false,
+  },
+  imageURL: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
 
-const writeProducts = (products) => {};
-
-module.exports = class Product {
-  constructor(name, imageURL, price, quantity, description, id = null) {
-    this.name = name;
-    this.imageURL = imageURL;
-    this.price = price;
-    this.quantity = quantity;
-    this.description = description;
-    this.id = id;
-  }
-
-  save() {
-    return sqlDb.execute(
-      'INSERT INTO products (name, imageURL, price, quantity, description) VALUES (?, ?, ?, ?, ?)',
-      [this.name, this.imageURL, this.price, this.quantity, this.description]
-    );
-  }
-
-  static deleteById(id) {}
-
-  static fetchAll() {
-    return sqlDb.execute('SELECT * FROM products');
-  }
-
-  static fetchById(id) {
-    return sqlDb.execute('SELECT * FROM products WHERE products.id = ?', [id]);
-  }
-};
+module.exports = Product;
