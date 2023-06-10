@@ -1,58 +1,42 @@
 [
-  {
-    "name": "1984 by George Orwell",
-    "imageURL": "https://th.bing.com/th/id/OIP.w836yGKkCEJlWKSTjSpiWAHaLH?pid=ImgDet&rs=1",
-    "price": "12.12",
-    "quantity": "230",
-    "description": "Nineteen Eighty-Four (also published as 1984) is a dystopian social science fiction novel and cautionary tale by English writer George Orwell. Thematically, it centres on the consequences of totalitarianism, mass surveillance and repressive regimentation of people and behaviours within society. Orwell, a democratic socialist, modelled the authoritarian state in the novel on Stalinist Russia and Nazi Germany. More broadly, the novel examines the role of truth and facts within societies and the ways in which they can be manipulated.",
-    "id": "49f7e017-8482-4bc5--020c2c230bae"
-  },
-  {
-    "name": "Another one Bites the Dust",
-    "imageURL": "https://th.bing.com/th/id/OIP.sDeRmAah4Gmxt6QtzgKuOgHaHa?pid=ImgDet&rs=1",
-    "price": "9.99",
-    "quantity": "125",
-    "description": "\"Another One Bites the Dust\" is a song by the British rock band Queen. Written by bassist John Deacon, the song was featured on the group's eighth studio album The Game (1980). It was a worldwide hit, charting number one on the US Billboard Hot 100 for three weeks, from 4 October to 18 October (being their second and final number-one single in the country). ",
-    "id": "49f7e017-8482-4bc5c-020c2c230baf"
-  },
-  {
-    "name": "Keychron V1",
-    "price": "84",
-    "quantity": "1",
-    "imageURL": "https://cdn.shopify.com/s/files/1/0059/0630/1017/t/5/assets/keychronv1custommechanicalkeyboard25-1657706139836.jpg?v=1657706172",
-    "description": "Keychron V1 : The V1 is a fully customizable mechanical keyboard ready for any situation. It’s a great option to introduce you to the custom keyboard world. With its compact 75% layout, QMK/VIA support, acoustic silicone pad, and double-shot PBT keycaps, the V1 is designed for ultra typing comfort and boost productivity.",
-    "id": "49f7e017-8482-4bc5-a800c2c230bag"
-  },
-  {
-    "name": "Macbook M2 Pro",
-    "imageURL": "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mbp14-spacegray-select-202301?wid=904&hei=840&fmt=jpeg&qlt=90&.v=1671304673229",
-    "price": "1800",
-    "quantity": "128",
-    "description": "MBP",
-    "id": "49f7e017-84bc5-a80c-020c2c230baa"
-  },
-  {
-    "name": "iPhone 14",
-    "price": "1000",
-    "quantity": "93",
-    "imageURL": "https://m.xcite.com/media/catalog/product//i/p/iphone_14_5g_-_red_1_3.jpg",
-    "description": "14 is ...",
-    "id": "49f7e017-8482-4bc5-a800c2c230bah"
-  },
-  {
-    "name": "Bose 700",
-    "imageURL": "https://th.bing.com/th/id/OIP.hhLAhezGLAelPLWsYw4BYQHaHa?pid=ImgDet&rs=1",
-    "price": "500",
-    "quantity": "12",
-    "description": "World Class Headphones",
-    "id": "49f7e017-8482-4bc5-a80c-2c230bai"
-  },
-  {
-    "name": "Logitech MX MASTER 3S",
-    "imageURL": "https://techcrunch.com/wp-content/uploads/2019/10/Logitech-MX-Keys-MX-Master-3-10.jpg?resize=1536",
-    "price": "99.99",
-    "quantity": "345",
-    "description": "Best mouse for creative professionals",
-    "id": "0dc35c4b-047e-45fe-af08-1cdde2cc84eb"
-  }
+	{
+		"name": "Keychron V1",
+		"price": "84",
+		"quantity": "1",
+		"imageURL": "https://cdn.shopify.com/s/files/1/0059/0630/1017/t/5/assets/keychronv1custommechanicalkeyboard25-1657706139836.jpg?v=1657706172",
+		"description": "Keychron V1 : The V1 is a fully customizable mechanical keyboard ready for any situation. It’s a great option to introduce you to the custom keyboard world. With its compact 75% layout, QMK/VIA support, acoustic silicone pad, and double-shot PBT keycaps, the V1 is designed for ultra typing comfort and boost productivity.",
+		"id": "49f7e017-8482-4bc5-a800c2c230bag"
+	},
+	{
+		"name": "Macbook M2 Pro",
+		"imageURL": "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mbp14-spacegray-select-202301?wid=904&hei=840&fmt=jpeg&qlt=90&.v=1671304673229",
+		"price": "1800",
+		"quantity": "128",
+		"description": "MBP",
+		"id": "49f7e017-84bc5-a80c-020c2c230baa"
+	},
+	{
+		"name": "iPhone 14",
+		"price": "1000",
+		"quantity": "93",
+		"imageURL": "https://m.xcite.com/media/catalog/product//i/p/iphone_14_5g_-_red_1_3.jpg",
+		"description": "14 is ...",
+		"id": "49f7e017-8482-4bc5-a800c2c230bah"
+	},
+	{
+		"name": "Bose 700",
+		"imageURL": "https://th.bing.com/th/id/OIP.hhLAhezGLAelPLWsYw4BYQHaHa?pid=ImgDet&rs=1",
+		"price": "500",
+		"quantity": "12",
+		"description": "World Class Headphones",
+		"id": "49f7e017-8482-4bc5-a80c-2c230bai"
+	},
+	{
+		"name": "Logitech MX MASTER 3S",
+		"imageURL": "https://techcrunch.com/wp-content/uploads/2019/10/Logitech-MX-Keys-MX-Master-3-10.jpg?resize=1536",
+		"price": "99.99",
+		"quantity": "345",
+		"description": "Best mouse for creative professionals",
+		"id": "0dc35c4b-047e-45fe-af08-1cdde2cc84eb"
+	}
 ]

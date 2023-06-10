@@ -20,6 +20,10 @@ const Product = sequelize.define('product', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  quantity: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   description: {
     type: DataTypes.STRING,
     allowNull: false,

@@ -2,29 +2,36 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 const getExistingItem = require('../utils/getExisitingItem');
 
-// Shows the homepage
-exports.getProducts = (req, res) => {
-  Product.fetchAll().then(([rows]) => {
+/**
+ * Shows the homepage
+ */
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await Product.findAll();
+
     res.render('shop/index', {
       title: 'Shopping Express',
       path: '/home',
-      products: rows,
+      products,
     });
-  });
+  } catch (e) {
+    console.log(e);
+  }
 };
 
-exports.getProductDetail = (req, res) => {
+exports.getProductDetail = async (req, res) => {
   const id = req.params.productId;
-  Product.fetchById(id)
-    .then(([rows]) => {
-      const product = rows[0];
-      res.render('shop/product-detail', {
-        title: `Product Detail - ${product?.name}`,
-        path: '/product-item',
-        product,
-      });
-    })
-    .catch((err) => console.log(err));
+  try {
+    const product = await Product.findByPk(id);
+
+    res.render('shop/product-detail', {
+      title: `Product Detail - ${product?.name}`,
+      path: '/product-item',
+      product,
+    });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 exports.getCart = (req, res) => {

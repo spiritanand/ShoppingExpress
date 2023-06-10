@@ -1,9 +1,11 @@
 const express = require('express');
 const path = require('path');
+const bodyParser = require('body-parser');
 
 require('dotenv').config();
 
-const bodyParser = require('body-parser');
+const sequelize = require('./utils/database');
+
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const { get404 } = require('./controllers/error');
@@ -26,4 +28,11 @@ app.use(shopRoutes);
 
 app.use(get404);
 
-app.listen(8080);
+(async () => {
+  try {
+    await sequelize.sync();
+    app.listen(8080);
+  } catch (err) {
+    console.log(err);
+  }
+})();
