@@ -9,6 +9,8 @@ const sequelize = require('./utils/database');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const { get404 } = require('./controllers/error');
+const Product = require('./models/product');
+const User = require('./models/users');
 
 const app = express();
 
@@ -28,9 +30,15 @@ app.use(shopRoutes);
 
 app.use(get404);
 
+Product.belongsTo(User, {
+  constraints: true,
+  onDelete: 'CASCADE',
+});
+User.hasMany(Product);
+
 (async () => {
   try {
-    await sequelize.sync();
+    await sequelize.sync({ force: true });
     app.listen(8080);
   } catch (err) {
     console.log(err);

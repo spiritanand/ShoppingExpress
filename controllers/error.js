@@ -10,3 +10,9 @@ exports.get404 = (req, res) => {
 };
 
 exports.render404View = render404View;
+
+exports.handleSequelizeError = (e, res) => {
+  console.log(e);
+
+  render404View(res);
+};

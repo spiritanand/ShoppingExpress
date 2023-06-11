@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-const { render404View } = require('./error');
+const { render404View, handleSequelizeError } = require('./error');
 const Cart = require('../models/cart');
 
 exports.getProducts = async (req, res) => {
@@ -12,7 +12,7 @@ exports.getProducts = async (req, res) => {
       products,
     });
   } catch (e) {
-    console.log(e);
+    handleSequelizeError(e, res);
   }
 };
 
@@ -39,7 +39,7 @@ exports.postAddProduct = async (req, res) => {
 
     res.redirect('/');
   } catch (e) {
-    console.log(e);
+    handleSequelizeError(e, res);
   }
 };
 
@@ -59,22 +59,39 @@ exports.getEditProduct = async (req, res) => {
       editMode,
     });
   } catch (e) {
-    console.log(e);
-
-    return render404View(res);
+    return handleSequelizeError(e, res);
   }
 };
 
-exports.postEditProduct = (req, res) => {
+exports.postEditProduct = async (req, res) => {
   const { id, name, imageURL, price, quantity, description } = req.body;
-  const product = new Product(name, imageURL, price, quantity, description, id);
-  product.save();
-  Cart.updateTotal(id, price);
-  res.redirect(`/products/${id}`);
+  try {
+    const product = await Product.findByPk(id);
+
+    product.name = name;
+    product.imageURL = imageURL;
+    product.price = price;
+    product.quantity = quantity;
+    product.description = description;
+
+    await product.save();
+    // Cart.updateTotal(id, price);
+
+    res.redirect(`/products/${id}`);
+  } catch (e) {
+    handleSequelizeError(e, res);
+  }
 };
 
-exports.postDeleteProduct = (req, res) => {
+exports.postDeleteProduct = async (req, res) => {
   const id = req.body?.productId;
-  Product.deleteById(id);
-  res.redirect('/admin/products');
+
+  try {
+    const product = await Product.findByPk(id);
+    await product.destroy();
+
+    res.redirect('/admin/products');
+  } catch (e) {
+    handleSequelizeError(e, res);
+  }
 };

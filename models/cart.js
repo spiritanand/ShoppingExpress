@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const { rootPath } = require('../utils/path');
-const Product = require('./product');
 const getExisitingItem = require('../utils/getExisitingItem');
 
 const cartPath = path.join(rootPath, 'data', 'cart.json');
