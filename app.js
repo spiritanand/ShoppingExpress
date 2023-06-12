@@ -8,7 +8,7 @@ const sequelize = require('./utils/database');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-const { get404 } = require('./controllers/error');
+const { get404, handleSequelizeError } = require('./controllers/error');
 const Product = require('./models/product');
 const User = require('./models/users');
 
@@ -22,6 +22,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(async (req, res, next) => {
+  try {
+    req.user = await User.findByPk(1);
+    next();
+  } catch (e) {
+    handleSequelizeError(e, res);
+  }
+});
 
 // handling routes
 // always place more specific routes on the top
@@ -38,7 +47,7 @@ User.hasMany(Product);
 
 (async () => {
   try {
-    await sequelize.sync({ force: true });
+    await sequelize.sync();
     app.listen(8080);
   } catch (err) {
     console.log(err);

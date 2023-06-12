@@ -1,10 +1,9 @@
 const Product = require('../models/product');
 const { render404View, handleSequelizeError } = require('./error');
-const Cart = require('../models/cart');
 
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.findAll();
+    const products = await req.user.getProducts();
 
     res.render('admin/products', {
       title: 'Products (Admin)',
@@ -29,7 +28,7 @@ exports.postAddProduct = async (req, res) => {
   const { name, imageURL, price, quantity, description } = req.body;
 
   try {
-    await Product.create({
+    await req.user.createProduct({
       name,
       imageURL,
       price,
@@ -48,7 +47,8 @@ exports.getEditProduct = async (req, res) => {
   const editMode = req.query?.edit;
 
   try {
-    const product = await Product.findByPk(id);
+    const products = await req.user.getProducts({ where: { id } });
+    const product = products[0];
 
     if (!product || editMode !== 'true') return render404View(res);
 
