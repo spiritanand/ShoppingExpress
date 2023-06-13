@@ -1,36 +1,27 @@
 const Product = require('../models/product');
-const { handleSequelizeError } = require('./error');
 
 /**
  * Shows the homepage
  */
 exports.getProducts = async (req, res) => {
-  try {
-    const products = await Product.findAll();
+  const products = await Product.findAll();
 
-    res.render('shop/index', {
-      title: 'Shopping Express',
-      path: '/home',
-      products,
-    });
-  } catch (e) {
-    handleSequelizeError(e, res);
-  }
+  res.render('shop/index', {
+    title: 'Shopping Express',
+    path: '/home',
+    products,
+  });
 };
 
 exports.getProductDetail = async (req, res) => {
   const id = req.params.productId;
-  try {
-    const product = await Product.findByPk(id);
+  const product = await Product.findByPk(id);
 
-    res.render('shop/product-detail', {
-      title: `Product Detail - ${product?.name}`,
-      path: '/product-item',
-      product,
-    });
-  } catch (e) {
-    handleSequelizeError(e, res);
-  }
+  res.render('shop/product-detail', {
+    title: `Product Detail - ${product?.name}`,
+    path: '/product-item',
+    product,
+  });
 };
 
 exports.getCart = async (req, res) => {
@@ -60,7 +51,7 @@ exports.getCart = async (req, res) => {
 exports.postAddToCart = async (req, res) => {
   const productId = req.body?.productId;
 
-  const cart = req.user.getCart();
+  const cart = await req.user.getCart();
 };
 
 exports.postDecreaseProductFromCart = (req, res) => {

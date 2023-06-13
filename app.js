@@ -8,7 +8,7 @@ const sequelize = require('./utils/database');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-const { get404, handleSequelizeError } = require('./controllers/error');
+const { get404 } = require('./controllers/error');
 const Product = require('./models/product');
 const User = require('./models/users');
 const Cart = require('./models/cart');
@@ -26,12 +26,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
-  try {
-    req.user = await User.findByPk(1);
-    next();
-  } catch (e) {
-    handleSequelizeError(e, res);
-  }
+  req.user = await User.findByPk(1);
+  next();
 });
 
 // handling routes
@@ -65,7 +61,7 @@ Cart.belongsToMany(Product, { through: CartItem });
 
 (async () => {
   try {
-    await sequelize.sync(``);
+    await sequelize.sync();
     app.listen(8080);
   } catch (err) {
     console.log(err);
