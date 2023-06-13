@@ -28,14 +28,21 @@ exports.getProductDetail = async (req, res) => {
       path: '/product-item',
       product,
     });
-  } catch (err) {
-    console.log(err);
+  } catch (e) {
+    handleSequelizeError(e, res);
   }
 };
 
-exports.getCart = (req, res) => {
-  // Cart.fetchCart((cart) => {
-  //   Product.fetchAll((products) => {
+exports.getCart = async (req, res) => {
+  const cart = await req.user.getCart();
+  const products = cart.getProducts();
+
+  res.render('shop/cart', {
+    title: 'Shopping Cart',
+    path: '/cart',
+    cart: products,
+  });
+
   //     const enrichedCart = { ...cart };
   //     for (const product of products) {
   //       const { existingItemIndex } = getExistingItem(
@@ -48,22 +55,12 @@ exports.getCart = (req, res) => {
   //           product,
   //         };
   //     }
-  //
-  //     res.render('shop/cart', {
-  //       title: 'Shopping Cart',
-  //       path: '/cart',
-  //       cart: enrichedCart,
-  //     });
-  //   });
-  // });
 };
 
-exports.postAddToCart = (req, res) => {
-  // const id = req.body?.productId;
-  // Product.fetchById(id, (product) => {
-  //   Cart.addProduct(id, product.price);
-  //   res.redirect('/cart');
-  // });
+exports.postAddToCart = async (req, res) => {
+  const productId = req.body?.productId;
+
+  const cart = req.user.getCart();
 };
 
 exports.postDecreaseProductFromCart = (req, res) => {

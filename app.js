@@ -11,6 +11,8 @@ const shopRoutes = require('./routes/shop');
 const { get404, handleSequelizeError } = require('./controllers/error');
 const Product = require('./models/product');
 const User = require('./models/users');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cartItem');
 
 const app = express();
 
@@ -39,15 +41,31 @@ app.use(shopRoutes);
 
 app.use(get404);
 
+/**
+ * An (admin) user can create multiple products.So a product belongs to a single user. A user can create
+ * multiple products
+ */
 Product.belongsTo(User, {
   constraints: true,
   onDelete: 'CASCADE',
 });
 User.hasMany(Product);
 
+/**
+ * A single cart belongs to a single user
+ */
+Cart.belongsTo(User);
+User.hasOne(Cart);
+
+/**
+ * A cart can have multiple products, and a product can be associated with multiple carts
+ */
+Product.belongsToMany(Cart, { through: CartItem });
+Cart.belongsToMany(Product, { through: CartItem });
+
 (async () => {
   try {
-    await sequelize.sync();
+    await sequelize.sync(``);
     app.listen(8080);
   } catch (err) {
     console.log(err);
