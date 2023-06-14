@@ -8,7 +8,7 @@
 	</div>
 	<div class = "px-4 py-2">
 		<!--		render empty cart if products does not exist or no products added-->
-		<% if (!cart?.products || cart?.products?.length === 0) { %>
+		<% if (products?.length === 0) { %>
 			<div class = "flex items-center justify-center px-4 py-6">
 				<p class = "text-xl text-gray-500">Your cart is empty.</p>
 			</div>
@@ -21,18 +21,18 @@
 			</div>
 		<% } else{ %>
 		<!--		render items if products exist in cart-->
-			<% if(cart?.products?.length !== 0) { %>
+			<% if(products?.length !== 0) { %>
 				<ul>
-					<% cart?.products?.forEach(product =>  { %>
+					<% products?.forEach(product =>  { %>
 						<!-- Cart Item -->
 						<li class = "flex flex-col md:flex-row items-center justify-around py-4 border-b">
 							<div class = "flex flex-col md:flex-row items-center justify-center gap-4 w-72">
-								<img class = "h-24 w-auto object-contain" src = "<%= product.product.imageURL; %>"
+								<img class = "h-24 w-auto object-contain" src = "<%= product.imageURL; %>"
 									 alt = "Product Image"
 								>
 								<div class = "ml-4">
-									<p class = "font-semibold break-words"><%= product.product.name; %></p>
-									<p class = "text-sm text-gray-500">Unit Price: $<%= product.product.price; %></p>
+									<p class = "font-semibold break-words"><%= product.name; %></p>
+									<p class = "text-sm text-gray-500">Unit Price: $<%= product.price; %></p>
 								</div>
 							</div>
 							<div class = "flex items-center mt-4 md:mt-0">
@@ -51,7 +51,7 @@
 									</button>
 								</form>
 								<!-- Product quantity -->
-								<p class = "mx-4 font-semibold"><%= product.quantity %></p>
+								<p class = "mx-4 font-semibold"><%= product.cartItem.quantity %></p>
 								<!-- Increase button -->
 								<form action = "/cart/add" method = "post">
 									<input type = "hidden" name = "productId" value = "<%= product.id %>">
@@ -93,7 +93,6 @@
 				<div class = "px-4 py-2">
 					<div class = "flex justify-between">
 						<p class = "font-semibold">Total Price:</p>
-						<p class = "font-semibold">$<%= cart?.total?.toFixed(2); %></p>
 					</div>
 				</div>
 				<div class = "px-4 py-2">

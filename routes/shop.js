@@ -7,16 +7,14 @@ const {
   postAddToCart,
   postRemoveProductFromCart,
   postDecreaseProductFromCart,
+  getOrders,
 } = require('../controllers/shop');
-// const path = require('path');
 
 const router = express.Router();
 
 router.get('/', getProducts);
-// res.sendFile(path.join(__dirname, '..','views', 'index.html')); // sending
-// next(); // allows req to continue to the next middleware
 
-router.get('/products/:productId', getProductDetail);
+router.get('products/:productId', getProductDetail);
 
 router.get('/cart', getCart);
 router.post('/cart', postAddToCart);
@@ -25,6 +23,8 @@ router.post('/cart/add', postAddToCart);
 router.post('/cart/decrease', postDecreaseProductFromCart);
 router.post('/cart/remove', postRemoveProductFromCart);
 
-router.get('checkout', getCheckout);
+router.get('/checkout', getCheckout);
+
+router.get('/orders', getOrders);
 
 module.exports = router;

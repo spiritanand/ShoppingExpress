@@ -5,7 +5,7 @@
 				<div class = "flex items-center">
 					<a href = "/" class = "hover:text-primary font-bold text-3xl <%= path === '/home'
 																					 ? 'text-primary'
-																					 : 'text-white' ;%>"
+																					 : 'text-white'; %>"
 					>
 						<span class = "hidden md:flex">Shopping Express</span>
 						<span class = "flex md:hidden">SE</span>
@@ -15,21 +15,26 @@
 				<div class = "flex">
 					<a href = "/" class = "hover:text-primary px-3 py-2 <%= path === '/home'
 																			? 'text-primary'
-																			: 'text-gray-300' ;%>"
+																			: 'text-gray-300'; %>"
 					>Home</a>
 					<a href = "/cart" class = "hover:text-primary px-3 py-2 <%= path === '/cart'
 																				? 'text-primary'
-																				: 'text-gray-300' ;%>"
+																				: 'text-gray-300'; %>"
 					>Cart</a>
+					<a href = "/orders" class = "hover:text-primary px-3 py-2 <%= path === '/orders'
+																				  ? 'text-primary'
+																				  : 'text-gray-300'; %>"
+					>Orders</a>
 					<a href = "/admin/add-product"
 					   class = "hover:text-primary px-3 py-2 <%= path === '/admin/add-product'
 																 ? 'text-primary'
-																 : 'text-gray-300' ;%>"
+																 : 'text-gray-300'; %>"
 					>Add</a>
 					<a href = "/admin/products"
-					   class = "hover:text-primary px-3 py-2 <%= path === '/admin/products' || path === '/admin/products'
+					   class = "hover:text-primary px-3 py-2 <%= path === '/admin/products' || path ===
+																 '/admin/products'
 																 ? 'text-primary'
-																 : 'text-gray-300' ;%>"
+																 : 'text-gray-300'; %>"
 					>Edit</a>
 				</div>
 			</div>
