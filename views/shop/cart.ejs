@@ -2,7 +2,7 @@
 </head>
 <body class = "bg-gray-200">
 <%- include('../includes/navbar.ejs') %>
-<div class = "max-w-5xl mx-5 md:mx-auto bg-white shadow-lg rounded-lg overflow-hidden min-h-screen">
+<div class = "max-w-5xl mx-3 md:mx-auto bg-white shadow-lg rounded-lg overflow-hidden min-h-screen">
 	<div class = "px-4 py-2">
 		<h2 class = "text-2xl font-semibold">Your Cart</h2>
 	</div>
@@ -24,72 +24,72 @@
 			<% if(products?.length !== 0) { %>
 				<ul>
 					<% products?.forEach(product =>  { %>
-					<!-- Cart Item -->
-					<li class = "flex flex-col md:flex-row items-center justify-around py-4 border-b">
-						<div class = "flex flex-col md:flex-row items-center justify-center gap-4 w-72">
-							<a href = '/products/<%= product.id ;%>'>
+						<!-- Cart Item -->
+						<li class = "flex flex-col md:flex-row items-center justify-around py-4 border-b">
+							<div class = "flex flex-col md:flex-row items-center justify-center gap-4 w-72">
+								<a href = '/products/<%= product.id; %>'>
 
-								<img class = "h-24 w-auto object-contain" src = "<%= product.imageURL; %>"
-									 alt = "<%= product.name %>"
-								>
-							</a>
-							<div class = "ml-4">
-								<p class = "font-semibold break-words"><%= product.name; %></p>
-								<p class = "text-sm text-gray-500">Unit Price: $<%= product.price; %></p>
+									<img class = "h-24 w-auto object-contain" src = "<%= product.imageURL; %>"
+										 alt = "<%= product.name %>"
+									>
+								</a>
+								<div class = "ml-4">
+									<p class = "font-semibold break-words"><%= product.name; %></p>
+									<p class = "text-sm text-gray-500">Unit Price: $<%= product.price; %></p>
+								</div>
 							</div>
-						</div>
-						<div class = "flex items-center mt-4 md:mt-0">
-							<!-- Decrease button -->
-							<form action = "/cart/decrease" method = "post">
-								<input type = "hidden" name = "productId" value = "<%= product.id %>">
-								<button class = "text-red-500 focus:outline-none p-2">
-									<svg class = "h-6 w-6" fill = "none" stroke = "currentColor"
-										 viewBox = "0 0 24 24"
-										 xmlns = "http://www.w3.org/2000/svg"
-									>
-										<path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2"
-											  d = "M20 12H4"
-										></path>
-									</svg>
-								</button>
-							</form>
-							<!-- Product quantity -->
-							<p class = "mx-4 font-semibold"><%= product.cartItem.quantity %></p>
-							<!-- Increase button -->
-							<form action = "/cart/add" method = "post">
-								<input type = "hidden" name = "productId" value = "<%= product.id %>">
-								<button class = "text-green-500 focus:outline-none p-2">
-									<svg class = "h-6 w-6" fill = "none" stroke = "currentColor"
-										 viewBox = "0 0 24 24"
-										 xmlns = "http://www.w3.org/2000/svg"
-									>
-										<path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2"
-											  d = "M12 6v6m0 0v6m0-6h6m-6 0H6"
-										></path>
-									</svg>
-								</button>
-							</form>
-						</div>
-						<div class = "px-4 py-2">
-							<!-- Delete button -->
-							<div class = "flex justify-between items-center">
-								<form action = "/cart/remove" method = "post">
+							<div class = "flex items-center mt-4 md:mt-0">
+								<!-- Decrease button -->
+								<form action = "/cart/decrease" method = "post">
 									<input type = "hidden" name = "productId" value = "<%= product.id %>">
 									<button class = "text-red-500 focus:outline-none p-2">
 										<svg class = "h-6 w-6" fill = "none" stroke = "currentColor"
-											 viewBox = "0 0 24 24" xmlns = "http://www.w3.org/2000/svg"
+											 viewBox = "0 0 24 24"
+											 xmlns = "http://www.w3.org/2000/svg"
 										>
-											<path stroke-linecap = "round" stroke-linejoin = "round"
-												  stroke-width = "2"
-												  d = "M6 18L18 6M6 6l12 12"
+											<path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2"
+												  d = "M20 12H4"
+											></path>
+										</svg>
+									</button>
+								</form>
+								<!-- Product quantity -->
+								<p class = "mx-4 font-semibold"><%= product.cartItem.quantity %></p>
+								<!-- Increase button -->
+								<form action = "/cart/add" method = "post">
+									<input type = "hidden" name = "productId" value = "<%= product.id %>">
+									<button class = "text-green-500 focus:outline-none p-2">
+										<svg class = "h-6 w-6" fill = "none" stroke = "currentColor"
+											 viewBox = "0 0 24 24"
+											 xmlns = "http://www.w3.org/2000/svg"
+										>
+											<path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2"
+												  d = "M12 6v6m0 0v6m0-6h6m-6 0H6"
 											></path>
 										</svg>
 									</button>
 								</form>
 							</div>
-						</div>
-					</li>
-					<hr class = "my-4 border-gray-400">
+							<div class = "px-4 py-2">
+								<!-- Delete button -->
+								<div class = "flex justify-between items-center">
+									<form action = "/cart/remove" method = "post">
+										<input type = "hidden" name = "productId" value = "<%= product.id %>">
+										<button class = "text-red-500 focus:outline-none p-2">
+											<svg class = "h-6 w-6" fill = "none" stroke = "currentColor"
+												 viewBox = "0 0 24 24" xmlns = "http://www.w3.org/2000/svg"
+											>
+												<path stroke-linecap = "round" stroke-linejoin = "round"
+													  stroke-width = "2"
+													  d = "M6 18L18 6M6 6l12 12"
+												></path>
+											</svg>
+										</button>
+									</form>
+								</div>
+							</div>
+						</li>
+						<hr class = "my-4 border-gray-400">
 				</ul>
 				<% }) %>
 				<hr class = "my-4 border-gray-400">
