@@ -15,12 +15,12 @@ exports.getProducts = async (req, res) => {
 };
 
 exports.getProductDetail = async (req, res) => {
-  const id = req.params.productId;
-  const product = await Product.findByPk(id);
+  const { productId } = req.params;
+  const product = await Product.findByPk(productId);
 
   res.render('shop/product-detail', {
     title: `Product Detail - ${product?.name}`,
-    path: '/product-item',
+    path: '/product-detail',
     product,
   });
 };
@@ -34,19 +34,6 @@ exports.getCart = async (req, res) => {
     path: '/cart',
     products,
   });
-
-  //     const enrichedCart = { ...cart };
-  //     for (const product of products) {
-  //       const { existingItemIndex } = getExistingItem(
-  //         cart?.products,
-  //         product?.id
-  //       );
-  //       if (existingItemIndex >= 0)
-  //         enrichedCart.products[existingItemIndex] = {
-  //           ...enrichedCart.products[existingItemIndex],
-  //           product,
-  //         };
-  //     }
 };
 
 exports.postAddToCart = async (req, res) => {
