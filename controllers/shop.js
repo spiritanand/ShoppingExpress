@@ -1,5 +1,15 @@
 const Product = require('../models/product');
 const CartItem = require('../models/cartItem');
+const { STATUS } = require('../constants/constants');
+const Order = require('../models/order');
+
+const getTotalPrice = (products) =>
+  products?.reduce((total, product) => {
+    const { quantity } = product.cartItem;
+    const productTotalPrice = product.price * quantity;
+
+    return total + productTotalPrice;
+  }, 0);
 
 /**
  * Shows the homepage
@@ -29,12 +39,7 @@ exports.getCart = async (req, res) => {
   const cart = await req.user?.getCart();
   const products = await cart?.getProducts();
 
-  const totalPrice = products?.reduce((total, product) => {
-    const { quantity } = product.cartItem;
-    const productTotalPrice = product.price * quantity;
-
-    return total + productTotalPrice;
-  }, 0);
+  const totalPrice = getTotalPrice(products);
 
   res.render('shop/cart', {
     title: 'Shopping Cart',
@@ -85,8 +90,8 @@ exports.postDecreaseProductFromCart = async (req, res) => {
 exports.postRemoveProductFromCart = async (req, res) => {
   const productId = req.body?.productId;
 
-  const cart = await req.user.getCart();
-  const products = await cart.getProducts({ where: { id: productId } });
+  const cart = await req.user?.getCart();
+  const products = await cart?.getProducts({ where: { id: productId } });
   const product = products[0];
 
   await product.cartItem.destroy();
@@ -101,15 +106,44 @@ exports.getCheckout = (req, res) => {
   });
 };
 
-exports.postCheckout = (req, res) => {
-  const products = req.body?.products;
-  const totalPrice = req.body?.totalPrice;
+exports.postCheckout = async (req, res) => {
+  const cart = await req.user?.getCart();
+  const products = await cart?.getProducts();
+
+  const totalPrice = getTotalPrice(products);
+
+  const order = await req.user?.createOrder({
+    totalPrice,
+    status: STATUS.SUCCESS,
+  });
+
+  products.forEach((product) => {
+    order.addProduct(product, {
+      through: { quantity: product.cartItem.quantity },
+    });
+  });
+
+  await cart.setProducts(null);
+
   res.redirect('/orders');
 };
 
-exports.getOrders = (req, res) => {
+exports.postCancelOrder = async (req, res) => {
+  const orderId = req.body?.orderId;
+
+  const order = await Order.findOne({ where: { id: orderId } });
+
+  await order.update({ status: STATUS.CANCELLED });
+
+  res.redirect('/orders');
+};
+
+exports.getOrders = async (req, res) => {
+  const orders = await req.user?.getOrders();
+
   res.render('shop/orders', {
     title: 'Orders',
     path: '/orders',
+    orders,
   });
 };

@@ -1,9 +1,12 @@
 const STATUS = {
   SUCCESS: 'success',
-  PROCESSED: 'processed',
+  PROCESSED: 'processing',
   CANCELLED: 'cancelled',
 };
 
+const ERROR_MESSAGES = {};
+
 module.exports = {
   STATUS,
+  ERROR_MESSAGES,
 };

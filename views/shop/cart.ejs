@@ -8,7 +8,7 @@
 	</div>
 	<div class = "px-4 py-2">
 		<!--		render empty cart if products does not exist or no products added-->
-		<% if (products?.length === 0) { %>
+		<% if (!products || products?.length === 0) { %>
 			<div class = "flex items-center justify-center px-4 py-6">
 				<p class = "text-xl text-gray-500">Your cart is empty.</p>
 			</div>
@@ -21,7 +21,7 @@
 			</div>
 		<% } else{ %>
 		<!--		render items if products exist in cart-->
-			<% if(products?.length !== 0) { %>
+			<% if(products && products?.length !== 0) { %>
 				<ul>
 					<% products?.forEach(product =>  { %>
 						<!-- Cart Item -->
@@ -101,15 +101,9 @@
 				</div>
 				<div class = "px-4 py-2">
 					<form action = "/checkout" method = "POST">
-						<input type = "hidden"
-							   name = "products"
-							   value = "<%= products %>"
+						<button class = "block w-full bg-blue-500 text-white font-semibold rounded-lg py-2 px-4 hover:bg-blue-600 focus:outline-none"
+								type = 'submit'
 						>
-						<input type = "hidden"
-							   name = "totalPrice"
-							   value = "<%= totalPrice %>"
-						>
-						<button class = "block w-full bg-blue-500 text-white font-semibold rounded-lg py-2 px-4 hover:bg-blue-600 focus:outline-none">
 							Checkout
 						</button>
 					</form>

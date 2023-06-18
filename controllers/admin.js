@@ -62,7 +62,6 @@ exports.postEditProduct = async (req, res) => {
   product.description = description;
 
   await product.save();
-  // Cart.updateTotal(id, price);
 
   res.redirect(`/products/${id}`);
 };
