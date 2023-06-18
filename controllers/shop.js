@@ -1,7 +1,12 @@
 const Product = require('../models/product');
 const CartItem = require('../models/cartItem');
-const { STATUS } = require('../constants/constants');
+const { STATUS, ERROR_MESSAGES } = require('../constants/constants');
 const Order = require('../models/order');
+const {
+  handleResourceNotFound,
+  handleUnauthorizedUser,
+  handleCustomSequelizeError,
+} = require('../utils/handleErrors');
 
 const getTotalPrice = (products) =>
   products?.reduce((total, product) => {
@@ -15,88 +20,129 @@ const getTotalPrice = (products) =>
  * Shows the homepage
  */
 exports.getProducts = async (req, res) => {
-  const products = await Product.findAll();
+  try {
+    const products = await Product.findAll();
 
-  res.render('shop/index', {
-    title: 'Shopping Express',
-    path: '/home',
-    products,
-  });
+    if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
+
+    res.render('shop/index', {
+      title: 'Shopping Express',
+      path: '/home',
+      products,
+    });
+  } catch (e) {
+    handleResourceNotFound(e, res);
+  }
 };
 
 exports.getProductDetail = async (req, res) => {
   const { productId } = req.params;
-  const product = await Product.findByPk(productId);
 
-  res.render('shop/product-detail', {
-    title: `Product Detail - ${product?.name}`,
-    path: '/product-detail',
-    product,
-  });
+  try {
+    const product = await Product.findByPk(productId);
+
+    if (!product) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
+
+    res.render('shop/product-detail', {
+      title: `Product Detail - ${product?.name}`,
+      path: '/product-detail',
+      product,
+    });
+  } catch (e) {
+    handleResourceNotFound(e, res);
+  }
 };
 
 exports.getCart = async (req, res) => {
-  const cart = await req.user?.getCart();
-  const products = await cart?.getProducts();
+  try {
+    const cart = await req.user?.getCart();
+    const products = await cart?.getProducts();
 
-  const totalPrice = getTotalPrice(products);
+    if (!req.user || !cart) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
 
-  res.render('shop/cart', {
-    title: 'Shopping Cart',
-    path: '/cart',
-    products,
-    totalPrice,
-  });
+    const totalPrice = getTotalPrice(products);
+
+    res.render('shop/cart', {
+      title: 'Shopping Cart',
+      path: '/cart',
+      products,
+      totalPrice,
+    });
+  } catch (e) {
+    handleUnauthorizedUser(e, res);
+  }
 };
 
 exports.postAddToCart = async (req, res) => {
   const productId = req.body?.productId;
 
-  const cart = await req.user?.getCart();
-  const products = await cart?.getProducts({ where: { id: productId } });
+  try {
+    const cart = await req.user?.getCart();
+    const products = await cart?.getProducts({ where: { id: productId } });
 
-  let product = products[0];
-  let updatedQuantity = 1;
+    if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
+    if (!req.user || !cart) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
 
-  if (product) {
-    updatedQuantity = product.cartItem.quantity + 1;
-  } else {
-    product = await Product.findByPk(productId);
+    let product = products[0];
+    let updatedQuantity = 1;
+
+    if (product) {
+      updatedQuantity = product.cartItem.quantity + 1;
+    } else {
+      product = await Product.findByPk(productId);
+    }
+
+    cart.addProduct(product, { through: { quantity: updatedQuantity } });
+
+    res.redirect('/cart');
+  } catch (e) {
+    handleCustomSequelizeError(e, res);
   }
-
-  cart.addProduct(product, { through: { quantity: updatedQuantity } });
-
-  res.redirect('/cart');
 };
 
 exports.postDecreaseProductFromCart = async (req, res) => {
   const productId = req.body?.productId;
 
-  const cart = await req.user?.getCart();
-  const products = await cart?.getProducts({ where: { id: productId } });
-  const product = products[0];
+  try {
+    const cart = await req.user?.getCart();
+    const products = await cart?.getProducts({ where: { id: productId } });
+    const product = products[0];
 
-  const updatedQuantity = product.cartItem.quantity - 1;
+    if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
+    if (!req.user || !cart) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
 
-  if (updatedQuantity >= 1) {
-    await cart.addProduct(product, { through: { quantity: updatedQuantity } });
-  } else {
-    await CartItem.destroy({ where: { id: product.cartItem.id } });
+    const updatedQuantity = product.cartItem.quantity - 1;
+
+    if (updatedQuantity >= 1) {
+      await cart.addProduct(product, {
+        through: { quantity: updatedQuantity },
+      });
+    } else {
+      await CartItem.destroy({ where: { id: product.cartItem.id } });
+    }
+
+    res.redirect('/cart');
+  } catch (e) {
+    handleCustomSequelizeError(e, res);
   }
-
-  res.redirect('/cart');
 };
 
 exports.postRemoveProductFromCart = async (req, res) => {
   const productId = req.body?.productId;
+  try {
+    const cart = await req.user?.getCart();
+    const products = await cart?.getProducts({ where: { id: productId } });
+    const product = products[0];
 
-  const cart = await req.user?.getCart();
-  const products = await cart?.getProducts({ where: { id: productId } });
-  const product = products[0];
+    if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
+    if (!req.user || !cart) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
 
-  await product.cartItem.destroy();
+    await product.cartItem.destroy();
 
-  res.redirect('/cart');
+    res.redirect('/cart');
+  } catch (e) {
+    handleCustomSequelizeError(e, res);
+  }
 };
 
 exports.getCheckout = (req, res) => {
@@ -107,43 +153,61 @@ exports.getCheckout = (req, res) => {
 };
 
 exports.postCheckout = async (req, res) => {
-  const cart = await req.user?.getCart();
-  const products = await cart?.getProducts();
+  try {
+    const cart = await req.user?.getCart();
+    const products = await cart?.getProducts();
 
-  const totalPrice = getTotalPrice(products);
+    if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
+    if (!req.user || !cart) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
 
-  const order = await req.user?.createOrder({
-    totalPrice,
-    status: STATUS.SUCCESS,
-  });
+    const totalPrice = getTotalPrice(products);
 
-  products.forEach((product) => {
-    order.addProduct(product, {
-      through: { quantity: product.cartItem.quantity },
+    const order = await req.user?.createOrder({
+      totalPrice,
+      status: STATUS.SUCCESS,
     });
-  });
 
-  await cart.setProducts(null);
+    products.forEach((product) => {
+      order.addProduct(product, {
+        through: { quantity: product.cartItem.quantity },
+      });
+    });
 
-  res.redirect('/orders');
+    await cart.setProducts(null);
+
+    res.redirect('/orders');
+  } catch (e) {
+    handleCustomSequelizeError(e, res);
+  }
 };
 
 exports.postCancelOrder = async (req, res) => {
   const orderId = req.body?.orderId;
+  try {
+    const order = await Order.findOne({ where: { id: orderId } });
 
-  const order = await Order.findOne({ where: { id: orderId } });
+    if (!order) throw new Error(ERROR_MESSAGES.ORDER_NOT_FOUND);
 
-  await order.update({ status: STATUS.CANCELLED });
+    await order.update({ status: STATUS.CANCELLED });
 
-  res.redirect('/orders');
+    res.redirect('/orders');
+  } catch (e) {
+    handleResourceNotFound(e, res);
+  }
 };
 
 exports.getOrders = async (req, res) => {
-  const orders = await req.user?.getOrders({ include: ['products'] });
+  try {
+    const orders = await req.user?.getOrders({ include: ['products'] });
 
-  res.render('shop/orders', {
-    title: 'Orders',
-    path: '/orders',
-    orders,
-  });
+    if (!orders) throw new Error(ERROR_MESSAGES.ORDER_NOT_FOUND);
+
+    res.render('shop/orders', {
+      title: 'Orders',
+      path: '/orders',
+      orders,
+    });
+  } catch (e) {
+    handleResourceNotFound(e, res);
+  }
 };

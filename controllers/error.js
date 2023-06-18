@@ -1,18 +1,25 @@
-const render404View = (res) => {
-  res.status(404).render('404', {
-    title: '404 Not Found',
+const { ERROR_MESSAGES } = require('../constants/constants');
+
+const renderErrorView = (
+  res,
+  status = 404,
+  title = '404 Page Not Found',
+  message = ERROR_MESSAGES.PAGE_NOT_FOUND
+) => {
+  res.status(status).render('error', {
+    title,
     path: '',
+    errorStatus: status,
+    message,
   });
 };
 
 exports.get404 = (req, res) => {
-  render404View(res);
+  renderErrorView(res);
 };
 
-exports.render404View = render404View;
+exports.handleSequelizeError = (e, res, status, title, message) => {
+  console.log('Error: ', e?.message);
 
-exports.handleSequelizeError = (e, res) => {
-  console.log(e);
-
-  render404View(res);
+  renderErrorView(res, status, title, message);
 };
