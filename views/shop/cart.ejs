@@ -96,12 +96,23 @@
 				<div class = "px-4 py-2">
 					<div class = "flex justify-between">
 						<p class = "font-semibold">Total Price:</p>
+						<p class = "font-semibold">$ <%= totalPrice %></p>
 					</div>
 				</div>
 				<div class = "px-4 py-2">
-					<button class = "block w-full bg-blue-500 text-white font-semibold rounded-lg py-2 px-4 hover:bg-blue-600 focus:outline-none">
-						Checkout
-					</button>
+					<form action = "/checkout" method = "POST">
+						<input type = "hidden"
+							   name = "products"
+							   value = "<%= products %>"
+						>
+						<input type = "hidden"
+							   name = "totalPrice"
+							   value = "<%= totalPrice %>"
+						>
+						<button class = "block w-full bg-blue-500 text-white font-semibold rounded-lg py-2 px-4 hover:bg-blue-600 focus:outline-none">
+							Checkout
+						</button>
+					</form>
 				</div>
 		<% }} %>
 	</div>

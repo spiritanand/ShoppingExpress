@@ -26,21 +26,29 @@ exports.getProductDetail = async (req, res) => {
 };
 
 exports.getCart = async (req, res) => {
-  const cart = await req.user.getCart();
-  const products = await cart.getProducts();
+  const cart = await req.user?.getCart();
+  const products = await cart?.getProducts();
+
+  const totalPrice = products?.reduce((total, product) => {
+    const { quantity } = product.cartItem;
+    const productTotalPrice = product.price * quantity;
+
+    return total + productTotalPrice;
+  }, 0);
 
   res.render('shop/cart', {
     title: 'Shopping Cart',
     path: '/cart',
     products,
+    totalPrice,
   });
 };
 
 exports.postAddToCart = async (req, res) => {
   const productId = req.body?.productId;
 
-  const cart = await req.user.getCart();
-  const products = await cart.getProducts({ where: { id: productId } });
+  const cart = await req.user?.getCart();
+  const products = await cart?.getProducts({ where: { id: productId } });
 
   let product = products[0];
   let updatedQuantity = 1;
@@ -59,8 +67,8 @@ exports.postAddToCart = async (req, res) => {
 exports.postDecreaseProductFromCart = async (req, res) => {
   const productId = req.body?.productId;
 
-  const cart = await req.user.getCart();
-  const products = await cart.getProducts({ where: { id: productId } });
+  const cart = await req.user?.getCart();
+  const products = await cart?.getProducts({ where: { id: productId } });
   const product = products[0];
 
   const updatedQuantity = product.cartItem.quantity - 1;
@@ -91,6 +99,12 @@ exports.getCheckout = (req, res) => {
     title: 'Checkout',
     path: '/checkout',
   });
+};
+
+exports.postCheckout = (req, res) => {
+  const products = req.body?.products;
+  const totalPrice = req.body?.totalPrice;
+  res.redirect('/orders');
 };
 
 exports.getOrders = (req, res) => {

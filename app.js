@@ -10,9 +10,11 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const { get404 } = require('./controllers/error');
 const Product = require('./models/product');
-const User = require('./models/users');
+const User = require('./models/user');
 const Cart = require('./models/cart');
 const CartItem = require('./models/cartItem');
+const Order = require('./models/order');
+const OrderItem = require('./models/orderItem');
 
 const app = express();
 
@@ -59,8 +61,22 @@ User.hasOne(Cart);
 Product.belongsToMany(Cart, { through: CartItem });
 Cart.belongsToMany(Product, { through: CartItem });
 
+/**
+ * An order belongs to a User and the user has many orders
+ */
+Order.belongsTo(User);
+User.hasMany(Order);
+
+/**
+ * An Order can have multiple products. It is easy to draw an analogy from Cart and CartItem when looking at
+ * Order and OrderItem
+ */
+Order.belongsToMany(Product, { through: OrderItem });
+// Product.belongsToMany(Order, { through: OrderItem });
+
 (async () => {
   try {
+    // await sequelize.sync({ force: true });
     await sequelize.sync();
     app.listen(8080);
   } catch (err) {
