@@ -139,7 +139,7 @@ exports.postCancelOrder = async (req, res) => {
 };
 
 exports.getOrders = async (req, res) => {
-  const orders = await req.user?.getOrders();
+  const orders = await req.user?.getOrders({ include: ['products'] });
 
   res.render('shop/orders', {
     title: 'Orders',
