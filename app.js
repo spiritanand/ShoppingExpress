@@ -15,6 +15,11 @@ const Cart = require('./models/cart');
 const CartItem = require('./models/cartItem');
 const Order = require('./models/order');
 const OrderItem = require('./models/orderItem');
+const { ERROR_MESSAGES } = require('./constants/constants');
+const {
+  handleNotLoggedInUser,
+  handleCustomSequelizeError,
+} = require('./utils/handleErrors');
 
 const app = express();
 
@@ -28,8 +33,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
-  req.user = await User.findByPk(1);
-  next();
+  try {
+    req.user = await User.findByPk(1);
+
+    if (!req.user && req.path !== '/')
+      throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+
+    next();
+  } catch (e) {
+    handleCustomSequelizeError(e, res);
+  }
 });
 
 // handling routes

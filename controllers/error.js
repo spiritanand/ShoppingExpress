@@ -18,8 +18,9 @@ exports.get404 = (req, res) => {
   renderErrorView(res);
 };
 
-exports.handleSequelizeError = (e, res, status, title, message) => {
+exports.handleSequelizeError = (e, res, status, title) => {
+  // eslint-disable-next-line no-console
   console.log('Error: ', e?.message);
 
-  renderErrorView(res, status, title, message);
+  renderErrorView(res, status, title, e.message);
 };

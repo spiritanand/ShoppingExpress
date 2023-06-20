@@ -2,11 +2,7 @@ const Product = require('../models/product');
 const CartItem = require('../models/cartItem');
 const { STATUS, ERROR_MESSAGES } = require('../constants/constants');
 const Order = require('../models/order');
-const {
-  handleResourceNotFound,
-  handleUnauthorizedUser,
-  handleCustomSequelizeError,
-} = require('../utils/handleErrors');
+const { handleCustomSequelizeError } = require('../utils/handleErrors');
 
 const getTotalPrice = (products) =>
   products?.reduce((total, product) => {
@@ -31,7 +27,7 @@ exports.getProducts = async (req, res) => {
       products,
     });
   } catch (e) {
-    handleResourceNotFound(e, res);
+    handleCustomSequelizeError(e, res);
   }
 };
 
@@ -49,7 +45,7 @@ exports.getProductDetail = async (req, res) => {
       product,
     });
   } catch (e) {
-    handleResourceNotFound(e, res);
+    handleCustomSequelizeError(e, res);
   }
 };
 
@@ -58,7 +54,7 @@ exports.getCart = async (req, res) => {
     const cart = await req.user?.getCart();
     const products = await cart?.getProducts();
 
-    if (!req.user || !cart) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
+    if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
     const totalPrice = getTotalPrice(products);
 
@@ -69,7 +65,7 @@ exports.getCart = async (req, res) => {
       totalPrice,
     });
   } catch (e) {
-    handleUnauthorizedUser(e, res);
+    handleCustomSequelizeError(e, res);
   }
 };
 
@@ -81,7 +77,7 @@ exports.postAddToCart = async (req, res) => {
     const products = await cart?.getProducts({ where: { id: productId } });
 
     if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
-    if (!req.user || !cart) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
+    if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
     let product = products[0];
     let updatedQuantity = 1;
@@ -109,7 +105,7 @@ exports.postDecreaseProductFromCart = async (req, res) => {
     const product = products[0];
 
     if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
-    if (!req.user || !cart) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
+    if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
     const updatedQuantity = product.cartItem.quantity - 1;
 
@@ -135,7 +131,7 @@ exports.postRemoveProductFromCart = async (req, res) => {
     const product = products[0];
 
     if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
-    if (!req.user || !cart) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
+    if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
     await product.cartItem.destroy();
 
@@ -158,7 +154,7 @@ exports.postCheckout = async (req, res) => {
     const products = await cart?.getProducts();
 
     if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
-    if (!req.user || !cart) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
+    if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
     const totalPrice = getTotalPrice(products);
 
@@ -192,7 +188,7 @@ exports.postCancelOrder = async (req, res) => {
 
     res.redirect('/orders');
   } catch (e) {
-    handleResourceNotFound(e, res);
+    handleCustomSequelizeError(e, res);
   }
 };
 
@@ -208,6 +204,6 @@ exports.getOrders = async (req, res) => {
       orders,
     });
   } catch (e) {
-    handleResourceNotFound(e, res);
+    handleCustomSequelizeError(e, res);
   }
 };

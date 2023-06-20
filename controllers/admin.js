@@ -2,7 +2,7 @@ const Product = require('../models/product');
 const { ERROR_MESSAGES } = require('../constants/constants');
 const {
   handleCustomSequelizeError,
-  handleUnauthorizedUser,
+  handleNotLoggedInUser,
   handleResourceNotFound,
 } = require('../utils/handleErrors');
 
@@ -48,7 +48,7 @@ exports.postAddProduct = async (req, res) => {
 
     res.redirect('/');
   } catch (e) {
-    handleUnauthorizedUser(e, res);
+    handleNotLoggedInUser(e, res);
   }
 };
 
