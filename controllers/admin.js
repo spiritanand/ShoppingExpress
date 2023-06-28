@@ -2,14 +2,10 @@ const Product = require('../models/product');
 const { ERROR_MESSAGES } = require('../constants/constants');
 const { handleCustomSequelizeError } = require('../utils/handleErrors');
 
-exports.getProducts = async (req, res) => {
+exports.getAdminProducts = async (req, res) => {
   try {
-    if (!req.user) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
-
-    const products = await req.user?.getProducts();
-
-    if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
-
+    const products = await Product.getAllItems();
+    
     res.render('admin/products', {
       title: 'Products (Admin)',
       path: '/admin/products',
@@ -30,22 +26,13 @@ exports.getAddProduct = (req, res) => {
 };
 
 exports.postAddProduct = async (req, res) => {
-  const { name, imageURL, price, quantity, description } = req.body;
-  try {
-    if (!req.user) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
+  const { name, price, description, quantity, imageURL } = req.body;
 
-    await req.user?.createProduct({
-      name,
-      imageURL,
-      price,
-      quantity,
-      description,
-    });
+  const product = new Product(name, price, description, quantity, imageURL);
 
-    res.redirect('/');
-  } catch (e) {
-    handleCustomSequelizeError(e, res);
-  }
+  await product.save();
+
+  res.redirect('/');
 };
 
 exports.getEditProduct = async (req, res) => {

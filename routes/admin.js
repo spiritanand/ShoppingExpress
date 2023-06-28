@@ -2,7 +2,7 @@ const express = require('express');
 const {
   getAddProduct,
   postAddProduct,
-  getProducts,
+  getAdminProducts,
   getEditProduct,
   postEditProduct,
   postDeleteProduct,
@@ -18,6 +18,6 @@ router.post('/edit-product', postEditProduct);
 
 router.post('/delete-product', postDeleteProduct);
 
-router.get('/products', getProducts);
+router.get('/products', getAdminProducts);
 
 module.exports = router;

@@ -1,33 +1,47 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../utils/database');
+const runMongo = require('../utils/database');
 
-const Product = sequelize.define('product', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    allowNull: false,
-    primaryKey: true,
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  price: {
-    type: DataTypes.DOUBLE,
-    allowNull: false,
-  },
-  imageURL: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  quantity: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  description: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
+class Product {
+  constructor(name, price, description, quantity, imageURL) {
+    this.name = name;
+    this.price = +price;
+    this.description = description;
+    this.quantity = +quantity;
+    this.imageURL = imageURL;
+  }
+
+  async save() {
+    const client = await runMongo();
+
+    try {
+      const db = client.db('ShoppingExpress');
+
+      const collection = db.collection('products');
+
+      console.log(this);
+      await collection.insertOne(this);
+    } catch (err) {
+      console.log(err.stack);
+    } finally {
+      await client.close();
+    }
+  }
+
+  static async getAllItems() {
+    const client = await runMongo();
+    try {
+      const db = client.db('ShoppingExpress');
+      const collection = db.collection('products');
+      return await collection.find().toArray();
+    } catch (error) {
+      console.error('Error retrieving items:', error);
+      throw error;
+    } finally {
+      if (client) {
+        await client.close();
+        console.log('MongoDB client connection closed');
+      }
+    }
+  }
+}
 
 module.exports = Product;
