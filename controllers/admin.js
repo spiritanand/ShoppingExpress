@@ -1,10 +1,6 @@
 const Product = require('../models/product');
 const { ERROR_MESSAGES } = require('../constants/constants');
-const {
-  handleCustomSequelizeError,
-  handleNotLoggedInUser,
-  handleResourceNotFound,
-} = require('../utils/handleErrors');
+const { handleCustomSequelizeError } = require('../utils/handleErrors');
 
 exports.getProducts = async (req, res) => {
   try {
@@ -48,7 +44,7 @@ exports.postAddProduct = async (req, res) => {
 
     res.redirect('/');
   } catch (e) {
-    handleNotLoggedInUser(e, res);
+    handleCustomSequelizeError(e, res);
   }
 };
 
@@ -95,7 +91,7 @@ exports.postEditProduct = async (req, res) => {
 
     res.redirect(`/products/${id}`);
   } catch (e) {
-    handleResourceNotFound(e, res);
+    handleCustomSequelizeError(e, res);
   }
 };
 
@@ -111,6 +107,6 @@ exports.postDeleteProduct = async (req, res) => {
 
     res.redirect('/admin/products');
   } catch (e) {
-    handleResourceNotFound(e, res);
+    handleCustomSequelizeError(e, res);
   }
 };

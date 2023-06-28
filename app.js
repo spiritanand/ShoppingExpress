@@ -16,10 +16,7 @@ const CartItem = require('./models/cartItem');
 const Order = require('./models/order');
 const OrderItem = require('./models/orderItem');
 const { ERROR_MESSAGES } = require('./constants/constants');
-const {
-  handleNotLoggedInUser,
-  handleCustomSequelizeError,
-} = require('./utils/handleErrors');
+const { handleCustomSequelizeError } = require('./utils/handleErrors');
 
 const app = express();
 
@@ -54,7 +51,7 @@ app.use(get404);
 
 /**
  * An (admin) user can create multiple products.So a product belongs to a single user. A user can create
- * multiple products
+ * multiple products. One-to-many relationship.
  */
 Product.belongsTo(User, {
   constraints: true,
@@ -63,26 +60,27 @@ Product.belongsTo(User, {
 User.hasMany(Product);
 
 /**
- * A single cart belongs to a single user
+ * A single cart belongs to a single user. One-to-one relationship.
  */
 Cart.belongsTo(User);
 User.hasOne(Cart);
 
 /**
- * A cart can have multiple products, and a product can be associated with multiple carts
+ * A cart can have multiple products, and a product can be associated with multiple carts. Many-to-many
+ * relationship.
  */
 Product.belongsToMany(Cart, { through: CartItem });
 Cart.belongsToMany(Product, { through: CartItem });
 
 /**
- * An order belongs to a User and the user has many orders
+ * An order belongs to a User and the user has many orders. One-to-many relationship.
  */
 Order.belongsTo(User);
 User.hasMany(Order);
 
 /**
  * An Order can have multiple products. It is easy to draw an analogy from Cart and CartItem when looking at
- * Order and OrderItem
+ * Order and OrderItem. Many-to-many relationship.
  */
 Order.belongsToMany(Product, { through: OrderItem });
 // Product.belongsToMany(Order, { through: OrderItem });
@@ -93,6 +91,7 @@ Order.belongsToMany(Product, { through: OrderItem });
     await sequelize.sync();
     app.listen(8080);
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.log(err);
   }
 })();
