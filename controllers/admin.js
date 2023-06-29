@@ -4,8 +4,8 @@ const { handleCustomSequelizeError } = require('../utils/handleErrors');
 
 exports.getAdminProducts = async (req, res) => {
   try {
-    const products = await Product.getAllItems();
-    
+    const products = await Product.getAllProducts();
+
     res.render('admin/products', {
       title: 'Products (Admin)',
       path: '/admin/products',

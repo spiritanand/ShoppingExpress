@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // handling routes
 // always place more specific routes on the top
 app.use('/admin', adminRoutes);
-// app.use(shopRoutes);
+app.use(shopRoutes);
 
 app.use(get404);
 

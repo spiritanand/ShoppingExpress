@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const runMongo = require('../utils/database');
 
 class Product {
@@ -26,7 +27,7 @@ class Product {
     }
   }
 
-  static async getAllItems() {
+  static async getAllProducts() {
     const client = await runMongo();
     try {
       const db = client.db('ShoppingExpress');
@@ -34,6 +35,24 @@ class Product {
       return await collection.find().toArray();
     } catch (error) {
       console.error('Error retrieving items:', error);
+      throw error;
+    } finally {
+      if (client) {
+        await client.close();
+        console.log('MongoDB client connection closed');
+      }
+    }
+  }
+
+  static async findById(id) {
+    const client = await runMongo();
+    try {
+      const db = client.db('ShoppingExpress');
+      const collection = db.collection('products');
+
+      return await collection.findOne({ _id: new ObjectId(id) });
+    } catch (error) {
+      console.error('Error finding product:', error);
       throw error;
     } finally {
       if (client) {

@@ -17,9 +17,7 @@ const getTotalPrice = (products) =>
  */
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.findAll();
-
-    if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
+    const products = await Product.getAllProducts();
 
     res.render('shop/index', {
       title: 'Shopping Express',
@@ -35,9 +33,8 @@ exports.getProductDetail = async (req, res) => {
   const { productId } = req.params;
 
   try {
-    const product = await Product.findByPk(productId);
-
-    if (!product) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
+    const product = await Product.findById(productId);
+    console.log({ product });
 
     res.render('shop/product-detail', {
       title: `Product Detail - ${product?.name}`,
