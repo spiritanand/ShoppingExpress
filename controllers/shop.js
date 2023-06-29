@@ -17,7 +17,7 @@ const getTotalPrice = (products) =>
  */
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.getAllProducts();
+    const products = await Product.getAll();
 
     res.render('shop/index', {
       title: 'Shopping Express',
@@ -34,7 +34,6 @@ exports.getProductDetail = async (req, res) => {
 
   try {
     const product = await Product.findById(productId);
-    console.log({ product });
 
     res.render('shop/product-detail', {
       title: `Product Detail - ${product?.name}`,

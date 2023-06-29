@@ -4,7 +4,7 @@ const { handleCustomSequelizeError } = require('../utils/handleErrors');
 
 exports.getAdminProducts = async (req, res) => {
   try {
-    const products = await Product.getAllProducts();
+    const products = await Product.getAll();
 
     res.render('admin/products', {
       title: 'Products (Admin)',
@@ -37,18 +37,14 @@ exports.postAddProduct = async (req, res) => {
 
 exports.getEditProduct = async (req, res) => {
   const id = req.params?.productId;
-  const editMode = req.query?.edit;
+  const editMode = req.query?.edit === 'true';
 
   try {
-    if (!req.user || editMode !== 'true')
-      throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
+    if (!editMode) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
 
-    const products = await req.user?.getProducts({ where: { id } });
+    const product = await Product.findById(id);
 
-    const product = products[0];
-
-    if (!products || !product)
-      throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
+    if (!product) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
 
     res.render('admin/edit-product', {
       title: `Edit - ${product.name}`,
@@ -63,16 +59,11 @@ exports.getEditProduct = async (req, res) => {
 
 exports.postEditProduct = async (req, res) => {
   const { id, name, imageURL, price, quantity, description } = req.body;
+
   try {
-    const product = await Product.findByPk(id);
+    const product = new Product(name, price, description, quantity, imageURL);
 
-    if (!product) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
-
-    product.name = name;
-    product.imageURL = imageURL;
-    product.price = price;
-    product.quantity = quantity;
-    product.description = description;
+    product.id = id;
 
     await product.save();
 
@@ -85,12 +76,10 @@ exports.postEditProduct = async (req, res) => {
 exports.postDeleteProduct = async (req, res) => {
   const productId = req.body?.productId;
 
+  console.log({ productId });
+
   try {
-    const product = await Product.findByPk(productId);
-
-    if (!product) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
-
-    await product.destroy();
+    await Product.deleteById(productId);
 
     res.redirect('/admin/products');
   } catch (e) {

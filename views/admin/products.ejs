@@ -17,13 +17,13 @@
 						/>
 						<p class = "text-gray-600 mb-2">Price: $<%= product?.price; %></p>
 						<div class = "flex gap-5">
-							<a href = "/admin/edit-product/<%= product.id; %>?edit=true">
+							<a href = "/admin/edit-product/<%= product._id.toString(); %>?edit=true">
 								<button class = "bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300 ease-in-out">
 									Edit
 								</button>
 							</a>
 							<form action = "/admin/delete-product" method = "POST">
-								<input type = "hidden" name = "productId" value = "<%= product.id %>">
+								<input type = "hidden" name = "productId" value = "<%= product._id.toString() %>">
 								<button class = "bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300 ease-in-out"
 										type = "submit"
 								>
