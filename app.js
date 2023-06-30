@@ -8,6 +8,9 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const { get404 } = require('./controllers/error');
 const runMongo = require('./utils/database');
+const User = require('./models/user');
+const { ERROR_MESSAGES } = require('./constants/constants');
+const { handleCustomSequelizeError } = require('./utils/handleErrors');
 
 const app = express();
 const PORT = 8080;
@@ -21,18 +24,33 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use(async (req, res, next) => {
-//   try {
-//     req.user = await User.findByPk(1);
-//
-//     if (!req.user && req.path !== '/')
-//       throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
-//
-//     next();
-//   } catch (e) {
-//     handleCustomSequelizeError(e, res);
-//   }
-// });
+// connect to database
+runMongo()
+  .then(() => {
+    // eslint-disable-next-line no-console
+    console.log(`Now listening on PORT: ${PORT}.`);
+    app.listen(PORT);
+
+    // const user = new User('spirit', 'spirit@email.com');
+    // return user.save();
+  })
+  .catch((err) => {
+    // eslint-disable-next-line no-console
+    console.log(err.stack);
+  });
+
+// middleware for storing user
+app.use(async (req, res, next) => {
+  try {
+    req.user = await User.findById('649dc1ea922cb55a934f277c');
+
+    if (!req.user) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+
+    next();
+  } catch (e) {
+    handleCustomSequelizeError(e, res);
+  }
+});
 
 // handling routes
 // always place more specific routes on the top
@@ -40,14 +58,3 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 app.use(get404);
-
-runMongo()
-  .then(() => {
-    // eslint-disable-next-line no-console
-    console.log(`Now listening on PORT: ${PORT}.`);
-    app.listen(PORT);
-  })
-  .catch((err) => {
-    // eslint-disable-next-line no-console
-    console.log(err.stack);
-  });

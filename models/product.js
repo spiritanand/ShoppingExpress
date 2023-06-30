@@ -2,39 +2,39 @@ const { ObjectId } = require('mongodb');
 const runMongo = require('../utils/database');
 
 class Product {
-  constructor(name, price, description, quantity, imageURL) {
+  constructor(name, price, description, quantity, imageURL, productID, userID) {
     this.name = name;
     this.price = +price;
     this.description = description;
     this.quantity = +quantity;
     this.imageURL = imageURL;
-    this.id = null;
+    this.productID = productID ? new ObjectId(productID) : null;
+    this.userID = userID;
   }
 
   async save() {
     const client = await runMongo();
-    const { id, ...product } = this;
+    const { productID, userID, ...product } = this;
 
     try {
       const db = client.db('ShoppingExpress');
 
       const collection = db.collection('products');
 
-      if (this.id) {
-        // Product already has an id, update the existing document
+      if (this.productID) {
+        // Product already has an productID, update the existing document
 
-        await collection.updateOne(
-          { _id: new ObjectId(this.id) },
+        return await collection.updateOne(
+          { _id: this.productID },
           { $set: product }
         );
-        console.log(`Updated product with _id: ${this.id}`);
-      } else {
-        // Product doesn't have an id, insert a new document
-        const result = await collection.insertOne(product);
-        console.log(`Inserted product with _id: ${result.insertedId}`);
       }
-    } catch (err) {
-      console.log(err.stack);
+
+      // Product doesn't have an productID, insert a new document
+      return await collection.insertOne(product);
+    } catch (error) {
+      console.log(error.stack);
+      throw error;
     } finally {
       await client.close();
       console.log('MongoDB client connection closed');

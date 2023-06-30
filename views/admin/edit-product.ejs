@@ -17,7 +17,7 @@
 				>Name:</label>
 				<input type = "text"
 					   name = "name"
-					   id = "name"
+					   productID = "name"
 					   value = "<%= editMode ? product.name : ''; %>"
 					   class = "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 				>
@@ -29,11 +29,11 @@
 				>Image URL:</label>
 				<input type = "text"
 					   name = "imageURL"
-					   id = "imageURL"
+					   productID = "imageURL"
 					   value = "<%= editMode ? product.imageURL : ''; %>"
 					   class = "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 				>
-				<img id = "previewImage" src = "<%= editMode ? product.imageURL : ''; %>" alt = "Image Preview"
+				<img productID = "previewImage" src = "<%= editMode ? product.imageURL : ''; %>" alt = "Image Preview"
 					 class = "product-image mt-4 mx-auto"
 					 style = "<%= product?.imageURL ? 'display: block;' : 'display: none;'; %>"
 				>
@@ -45,7 +45,7 @@
 				>Price:</label>
 				<input type = "text"
 					   name = "price"
-					   id = "price"
+					   productID = "price"
 					   value = "<%= editMode ? product.price : ''; %>"
 					   class = "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 				>
@@ -57,7 +57,7 @@
 				>Quantity Left:</label>
 				<input type = "text"
 					   name = "quantity"
-					   id = "quantity"
+					   productID = "quantity"
 					   value = "<%= editMode ? product.quantity : ''; %>"
 					   class = "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 				>
@@ -69,7 +69,7 @@
 				>Description:</label>
 				<input type = "text"
 					   name = "description"
-					   id = "description"
+					   productID = "description"
 					   value = "<%= editMode ? product.description : ''; %>"
 					   class = "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 				>
@@ -77,9 +77,9 @@
 
 			<% if (editMode) { %>
 				<input type = "hidden"
-					   name = "id"
-					   id = "id"
-					   value = "<%= product?._id.toString(); %>"
+					   name = "productID"
+					   productID = "productID"
+					   value = "<%= product?.userId.toString(); %>"
 				>
 			<% } %>
 

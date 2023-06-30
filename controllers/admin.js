@@ -27,8 +27,18 @@ exports.getAddProduct = (req, res) => {
 
 exports.postAddProduct = async (req, res) => {
   const { name, price, description, quantity, imageURL } = req.body;
+  const user = req?.user;
+  const { _id: userID } = user;
 
-  const product = new Product(name, price, description, quantity, imageURL);
+  const product = new Product(
+    name,
+    price,
+    description,
+    quantity,
+    imageURL,
+    null,
+    userID
+  );
 
   await product.save();
 
@@ -58,16 +68,31 @@ exports.getEditProduct = async (req, res) => {
 };
 
 exports.postEditProduct = async (req, res) => {
-  const { id, name, imageURL, price, quantity, description } = req.body;
+  const {
+    id: productID,
+    name,
+    imageURL,
+    price,
+    quantity,
+    description,
+  } = req.body;
+  const user = req?.user;
+  const { _id: userID } = user;
 
   try {
-    const product = new Product(name, price, description, quantity, imageURL);
-
-    product.id = id;
+    const product = new Product(
+      name,
+      price,
+      description,
+      quantity,
+      imageURL,
+      productID,
+      userID
+    );
 
     await product.save();
 
-    res.redirect(`/products/${id}`);
+    res.redirect(`/products/${productID}`);
   } catch (e) {
     handleCustomSequelizeError(e, res);
   }
@@ -75,8 +100,6 @@ exports.postEditProduct = async (req, res) => {
 
 exports.postDeleteProduct = async (req, res) => {
   const productId = req.body?.productId;
-
-  console.log({ productId });
 
   try {
     await Product.deleteById(productId);

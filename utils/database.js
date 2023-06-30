@@ -18,4 +18,3 @@ async function runMongo() {
 }
 
 module.exports = runMongo;
-exports.client = client;
