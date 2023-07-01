@@ -30,10 +30,10 @@ exports.getProducts = async (req, res) => {
 };
 
 exports.getProductDetail = async (req, res) => {
-  const { productId } = req.params;
+  const { productID } = req.params;
 
   try {
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productID);
 
     res.render('shop/product-detail', {
       title: `Product Detail - ${product?.name}`,
@@ -66,7 +66,7 @@ exports.getCart = async (req, res) => {
 };
 
 exports.postAddToCart = async (req, res) => {
-  const productId = req.body?.productId;
+  const productID = req.body?.productID;
 
   try {
     const cart = await req.user?.getCart();
@@ -93,7 +93,7 @@ exports.postAddToCart = async (req, res) => {
 };
 
 exports.postDecreaseProductFromCart = async (req, res) => {
-  const productId = req.body?.productId;
+  const productID = req.body?.productID;
 
   try {
     const cart = await req.user?.getCart();
@@ -120,7 +120,7 @@ exports.postDecreaseProductFromCart = async (req, res) => {
 };
 
 exports.postRemoveProductFromCart = async (req, res) => {
-  const productId = req.body?.productId;
+  const productID = req.body?.productID;
   try {
     const cart = await req.user?.getCart();
     const products = await cart?.getProducts({ where: { id: productId } });

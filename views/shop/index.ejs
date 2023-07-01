@@ -12,7 +12,7 @@
 				<article class = "bg-white rounded-lg shadow-lg p-6">
 					<div class = "flex flex-col items-center mb-4">
 						<h2 class = "text-lg font-bold mb-2"><%= product?.name; %></h2>
-						<a href = "/products/<%= product.userId.toString() %>">
+						<a href = "/products/<%= product._id.toString() %>">
 							<img class = "w-full h-auto mb-2 product-image" src = "<%= product?.imageURL; %>"
 								 alt = "<%= product?.name; %>"
 							/>

@@ -46,13 +46,13 @@ exports.postAddProduct = async (req, res) => {
 };
 
 exports.getEditProduct = async (req, res) => {
-  const id = req.params?.productId;
+  const productID = req.params?.productID;
   const editMode = req.query?.edit === 'true';
 
   try {
     if (!editMode) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
 
-    const product = await Product.findById(id);
+    const product = await Product.findById(productID);
 
     if (!product) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
 
@@ -68,14 +68,7 @@ exports.getEditProduct = async (req, res) => {
 };
 
 exports.postEditProduct = async (req, res) => {
-  const {
-    id: productID,
-    name,
-    imageURL,
-    price,
-    quantity,
-    description,
-  } = req.body;
+  const { productID, name, imageURL, price, quantity, description } = req.body;
   const user = req?.user;
   const { _id: userID } = user;
 
@@ -99,10 +92,10 @@ exports.postEditProduct = async (req, res) => {
 };
 
 exports.postDeleteProduct = async (req, res) => {
-  const productId = req.body?.productId;
+  const productID = req.body?.productID;
 
   try {
-    await Product.deleteById(productId);
+    await Product.deleteById(productID);
 
     res.redirect('/admin/products');
   } catch (e) {

@@ -14,7 +14,7 @@ class Product {
 
   async save() {
     const client = await runMongo();
-    const { productID, userID, ...product } = this;
+    const { productID, ...product } = this;
 
     try {
       const db = client.db('ShoppingExpress');
@@ -30,7 +30,7 @@ class Product {
         );
       }
 
-      // Product doesn't have an productID, insert a new document
+      // Product doesn't have a productID, insert a new document
       return await collection.insertOne(product);
     } catch (error) {
       console.log(error.stack);

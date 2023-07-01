@@ -11,7 +11,7 @@
 		"prettier"
 	],
 	"rules": {
-		"no-console": "off",
+		"no-console": "warn",
 		"no-process-exit": "off",
 		"class-methods-use-this": "off"
 	}
