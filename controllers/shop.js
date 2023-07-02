@@ -1,16 +1,7 @@
 const Product = require('../models/product');
-const CartItem = require('../models/cartItem');
 const { STATUS, ERROR_MESSAGES } = require('../constants/constants');
 const Order = require('../models/order');
 const { handleCustomSequelizeError } = require('../utils/handleErrors');
-
-const getTotalPrice = (products) =>
-  products?.reduce((total, product) => {
-    const { quantity } = product.cartItem;
-    const productTotalPrice = product.price * quantity;
-
-    return total + productTotalPrice;
-  }, 0);
 
 /**
  * Shows the homepage
@@ -47,12 +38,23 @@ exports.getProductDetail = async (req, res) => {
 
 exports.getCart = async (req, res) => {
   try {
-    const cart = await req.user?.getCart();
-    const products = await cart?.getProducts();
+    const cart = await req.user?.cart;
+    let totalPrice = 0;
 
     if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
-    const totalPrice = getTotalPrice(products);
+    const products = await Promise.all(
+      cart.map(async (cartItem) => {
+        const product = await Product.findById(cartItem.productID);
+
+        totalPrice += product.price * cartItem.quantity;
+
+        return {
+          ...product,
+          quantity: cartItem.quantity,
+        };
+      })
+    );
 
     res.render('shop/cart', {
       title: 'Shopping Cart',
@@ -69,22 +71,11 @@ exports.postAddToCart = async (req, res) => {
   const productID = req.body?.productID;
 
   try {
-    const cart = await req.user?.getCart();
-    const products = await cart?.getProducts({ where: { id: productId } });
+    const cart = await req.user?.cart;
 
-    if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
     if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
-    let product = products[0];
-    let updatedQuantity = 1;
-
-    if (product) {
-      updatedQuantity = product.cartItem.quantity + 1;
-    } else {
-      product = await Product.findByPk(productId);
-    }
-
-    cart.addProduct(product, { through: { quantity: updatedQuantity } });
+    await req.user.addToCart(productID);
 
     res.redirect('/cart');
   } catch (e) {
@@ -96,22 +87,11 @@ exports.postDecreaseProductFromCart = async (req, res) => {
   const productID = req.body?.productID;
 
   try {
-    const cart = await req.user?.getCart();
-    const products = await cart?.getProducts({ where: { id: productId } });
-    const product = products[0];
+    const cart = await req.user?.cart;
 
-    if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
     if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
-    const updatedQuantity = product.cartItem.quantity - 1;
-
-    if (updatedQuantity >= 1) {
-      await cart.addProduct(product, {
-        through: { quantity: updatedQuantity },
-      });
-    } else {
-      await CartItem.destroy({ where: { id: product.cartItem.id } });
-    }
+    await req.user.decreaseFromCart(productID);
 
     res.redirect('/cart');
   } catch (e) {
@@ -121,15 +101,13 @@ exports.postDecreaseProductFromCart = async (req, res) => {
 
 exports.postRemoveProductFromCart = async (req, res) => {
   const productID = req.body?.productID;
-  try {
-    const cart = await req.user?.getCart();
-    const products = await cart?.getProducts({ where: { id: productId } });
-    const product = products[0];
 
-    if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
+  try {
+    const cart = await req.user?.cart;
+
     if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
-    await product.cartItem.destroy();
+    await req.user.removeFromCart(productID);
 
     res.redirect('/cart');
   } catch (e) {

@@ -35,9 +35,6 @@ class Product {
     } catch (error) {
       console.log(error.stack);
       throw error;
-    } finally {
-      await client.close();
-      console.log('MongoDB client connection closed');
     }
   }
 
@@ -50,11 +47,6 @@ class Product {
     } catch (error) {
       console.error('Error retrieving items:', error);
       throw error;
-    } finally {
-      if (client) {
-        await client.close();
-        console.log('MongoDB client connection closed');
-      }
     }
   }
 
@@ -68,11 +60,6 @@ class Product {
     } catch (error) {
       console.error('Error finding product:', error);
       throw error;
-    } finally {
-      if (client) {
-        await client.close();
-        console.log('MongoDB client connection closed');
-      }
     }
   }
 
@@ -86,11 +73,6 @@ class Product {
     } catch (error) {
       console.error('Error finding product:', error);
       throw error;
-    } finally {
-      if (client) {
-        await client.close();
-        console.log('MongoDB client connection closed');
-      }
     }
   }
 }

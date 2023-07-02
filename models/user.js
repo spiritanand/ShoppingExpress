@@ -2,27 +2,97 @@ const { ObjectId } = require('mongodb');
 const runMongo = require('../utils/database');
 
 class User {
-  constructor(username, email) {
+  constructor(username, email, cart, id) {
     this.username = username;
     this.email = email;
-    this.id = null;
+    this.cart = cart;
+    this.id = id;
   }
 
   async save() {
     const client = await runMongo();
-    const { id, ...user } = this;
+    const { ...user } = this;
 
     try {
       const db = client.db('ShoppingExpress');
       const collection = db.collection('users');
 
-      await collection.insertOne(user);
+      return collection.insertOne(user);
     } catch (err) {
       console.log(err.stack);
-    } finally {
-      await client.close();
-      console.log('MongoDB client connection closed');
+      throw err;
     }
+  }
+
+  async updateCart(updatedCart) {
+    const client = await runMongo();
+
+    try {
+      const db = client.db('ShoppingExpress');
+      const collection = db.collection('users');
+
+      return collection.updateOne(
+        { _id: this.id },
+        { $set: { cart: updatedCart } }
+      );
+    } catch (err) {
+      console.log(err.stack);
+      throw err;
+    }
+  }
+
+  async addToCart(productID) {
+    let updatedCart;
+
+    const isProductInCart = this.cart.some(
+      (product) => product.productID === productID
+    );
+
+    if (isProductInCart) {
+      updatedCart = this.cart.map((product) => {
+        if (product.productID === productID) {
+          return {
+            ...product,
+            quantity: product.quantity + 1,
+          };
+        }
+        return product;
+      });
+    } else {
+      updatedCart = [
+        ...this.cart,
+        {
+          productID,
+          quantity: 1,
+        },
+      ];
+    }
+
+    await this.updateCart(updatedCart);
+  }
+
+  async removeFromCart(productID) {
+    const updatedCart = this.cart.filter(
+      (product) => product.productID !== productID
+    );
+
+    await this.updateCart(updatedCart);
+  }
+
+  async decreaseFromCart(productID) {
+    const updatedCart = this.cart
+      .map((product) => {
+        if (product.productID === productID) {
+          return {
+            ...product,
+            quantity: product.quantity - 1,
+          };
+        }
+        return product;
+      })
+      .filter((product) => product.quantity > 0);
+
+    await this.updateCart(updatedCart);
   }
 
   static async findById(id) {
@@ -36,9 +106,6 @@ class User {
     } catch (error) {
       console.log(error.stack);
       throw error;
-    } finally {
-      await client.close();
-      console.log('MongoDB client connection closed');
     }
   }
 }
