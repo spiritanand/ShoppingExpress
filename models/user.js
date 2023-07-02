@@ -1,5 +1,6 @@
 const { ObjectId } = require('mongodb');
 const runMongo = require('../utils/database');
+const Product = require('./product');
 
 class User {
   constructor(username, email, cart, id) {
@@ -93,6 +94,32 @@ class User {
       .filter((product) => product.quantity > 0);
 
     await this.updateCart(updatedCart);
+  }
+
+  async clearCart() {
+    await this.updateCart([]);
+  }
+
+  async getEnrichedCart() {
+    let totalPrice = 0;
+
+    const products = await Promise.all(
+      this.cart.map(async (cartItem) => {
+        const product = await Product.findById(cartItem.productID);
+
+        totalPrice += product.price * cartItem.quantity;
+
+        return {
+          ...product,
+          quantity: cartItem.quantity,
+        };
+      })
+    );
+
+    return {
+      products,
+      totalPrice,
+    };
   }
 
   static async findById(id) {

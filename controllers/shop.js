@@ -39,22 +39,10 @@ exports.getProductDetail = async (req, res) => {
 exports.getCart = async (req, res) => {
   try {
     const cart = await req.user?.cart;
-    let totalPrice = 0;
 
     if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
-    const products = await Promise.all(
-      cart.map(async (cartItem) => {
-        const product = await Product.findById(cartItem.productID);
-
-        totalPrice += product.price * cartItem.quantity;
-
-        return {
-          ...product,
-          quantity: cartItem.quantity,
-        };
-      })
-    );
+    const { products, totalPrice } = await req.user.getEnrichedCart();
 
     res.render('shop/cart', {
       title: 'Shopping Cart',
@@ -122,28 +110,35 @@ exports.getCheckout = (req, res) => {
   });
 };
 
+exports.getOrders = async (req, res) => {
+  try {
+    const user = req?.user;
+
+    if (!user) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+
+    const orders = await Order.getAllByUserID(req.user.id);
+
+    res.render('shop/orders', {
+      title: 'Orders',
+      path: '/orders',
+      orders,
+    });
+  } catch (e) {
+    handleCustomSequelizeError(e, res);
+  }
+};
+
 exports.postCheckout = async (req, res) => {
   try {
-    const cart = await req.user?.getCart();
-    const products = await cart?.getProducts();
+    const cart = await req.user?.cart;
 
-    if (!products) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
     if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
-    const totalPrice = getTotalPrice(products);
+    const order = new Order(req.user.id, cart);
 
-    const order = await req.user?.createOrder({
-      totalPrice,
-      status: STATUS.SUCCESS,
-    });
-
-    products.forEach((product) => {
-      order.addProduct(product, {
-        through: { quantity: product.cartItem.quantity },
-      });
-    });
-
-    await cart.setProducts(null);
+    const enrichedCart = await req.user.getEnrichedCart();
+    await order.create(enrichedCart);
+    await req.user.clearCart();
 
     res.redirect('/orders');
   } catch (e) {
@@ -152,31 +147,13 @@ exports.postCheckout = async (req, res) => {
 };
 
 exports.postCancelOrder = async (req, res) => {
-  const orderId = req.body?.orderId;
+  const orderID = req.body?.orderID;
   try {
-    const order = await Order.findOne({ where: { id: orderId } });
+    const order = await Order.cancel(orderID);
 
     if (!order) throw new Error(ERROR_MESSAGES.ORDER_NOT_FOUND);
 
-    await order.update({ status: STATUS.CANCELLED });
-
     res.redirect('/orders');
-  } catch (e) {
-    handleCustomSequelizeError(e, res);
-  }
-};
-
-exports.getOrders = async (req, res) => {
-  try {
-    const orders = await req.user?.getOrders({ include: ['products'] });
-
-    if (!orders) throw new Error(ERROR_MESSAGES.ORDER_NOT_FOUND);
-
-    res.render('shop/orders', {
-      title: 'Orders',
-      path: '/orders',
-      orders,
-    });
   } catch (e) {
     handleCustomSequelizeError(e, res);
   }

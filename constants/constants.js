@@ -1,6 +1,6 @@
 const STATUS = {
   SUCCESS: 'success',
-  PROCESSED: 'processing',
+  PENDING: 'processing',
   CANCELLED: 'cancelled',
 };
 

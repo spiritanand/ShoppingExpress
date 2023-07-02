@@ -8,8 +8,6 @@ const client = new MongoClient(uri);
 async function runMongo() {
   try {
     await client.connect();
-    console.log('Connected to MongoDB Atlas');
-
     return client;
   } catch (error) {
     console.error('Error connecting to MongoDB Atlas:', error);
