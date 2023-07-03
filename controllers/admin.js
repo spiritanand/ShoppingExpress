@@ -4,7 +4,7 @@ const { handleCustomSequelizeError } = require('../utils/handleErrors');
 
 exports.getAdminProducts = async (req, res) => {
   try {
-    const products = await Product.getAll();
+    const products = await Product.find();
 
     res.render('admin/products', {
       title: 'Products (Admin)',
@@ -30,19 +30,22 @@ exports.postAddProduct = async (req, res) => {
   const user = req?.user;
   const { _id: userID } = user;
 
-  const product = new Product(
-    name,
-    price,
-    description,
-    quantity,
-    imageURL,
-    null,
-    userID
-  );
+  try {
+    const product = new Product({
+      name,
+      price,
+      description,
+      quantity,
+      imageURL,
+      userID,
+    });
 
-  await product.save();
+    await product.save();
 
-  res.redirect('/');
+    res.redirect('/');
+  } catch (e) {
+    handleCustomSequelizeError(e, res);
+  }
 };
 
 exports.getEditProduct = async (req, res) => {
@@ -68,20 +71,12 @@ exports.getEditProduct = async (req, res) => {
 };
 
 exports.postEditProduct = async (req, res) => {
-  const { productID, name, imageURL, price, quantity, description } = req.body;
-  const user = req?.user;
-  const { _id: userID } = user;
+  const { productID, ...updatedProduct } = req.body;
 
   try {
-    const product = new Product(
-      name,
-      price,
-      description,
-      quantity,
-      imageURL,
-      productID,
-      userID
-    );
+    const product = await Product.findById(productID);
+
+    Object.assign(product, updatedProduct);
 
     await product.save();
 
@@ -95,7 +90,7 @@ exports.postDeleteProduct = async (req, res) => {
   const productID = req.body?.productID;
 
   try {
-    await Product.deleteById(productID);
+    await Product.findByIdAndDelete(productID);
 
     res.redirect('/admin/products');
   } catch (e) {

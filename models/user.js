@@ -1,140 +1,100 @@
-const { ObjectId } = require('mongodb');
-const runMongo = require('../utils/database');
+const mongoose = require('mongoose');
 const Product = require('./product');
 
-class User {
-  constructor(username, email, cart, id) {
-    this.username = username;
-    this.email = email;
-    this.cart = cart;
-    this.id = id;
-  }
-
-  async save() {
-    const client = await runMongo();
-    const { ...user } = this;
-
-    try {
-      const db = client.db('ShoppingExpress');
-      const collection = db.collection('users');
-
-      return collection.insertOne(user);
-    } catch (err) {
-      console.log(err.stack);
-      throw err;
-    }
-  }
-
-  async updateCart(updatedCart) {
-    const client = await runMongo();
-
-    try {
-      const db = client.db('ShoppingExpress');
-      const collection = db.collection('users');
-
-      return collection.updateOne(
-        { _id: this.id },
-        { $set: { cart: updatedCart } }
-      );
-    } catch (err) {
-      console.log(err.stack);
-      throw err;
-    }
-  }
-
-  async addToCart(productID) {
-    let updatedCart;
-
-    const isProductInCart = this.cart.some(
-      (product) => product.productID === productID
-    );
-
-    if (isProductInCart) {
-      updatedCart = this.cart.map((product) => {
-        if (product.productID === productID) {
-          return {
-            ...product,
-            quantity: product.quantity + 1,
-          };
-        }
-        return product;
-      });
-    } else {
-      updatedCart = [
-        ...this.cart,
-        {
-          productID,
-          quantity: 1,
+const userSchema = mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    cart: [
+      {
+        productID: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
         },
-      ];
-    }
+        quantity: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+  },
+  {
+    methods: {
+      async getEnrichedCart() {
+        let totalPrice = 0;
 
-    await this.updateCart(updatedCart);
-  }
+        const products = await Promise.all(
+          this.cart.map(async (cartItem) => {
+            const product = await Product.findById(cartItem.productID);
 
-  async removeFromCart(productID) {
-    const updatedCart = this.cart.filter(
-      (product) => product.productID !== productID
-    );
+            // If product is not found, remove it from the enriched cart.
+            // This way anywhere we are presenting the cart or storing the order, we can be sure that the
+            // product exists.
+            if (!product) {
+              return null;
+            }
 
-    await this.updateCart(updatedCart);
-  }
+            totalPrice += product.price * cartItem.quantity;
 
-  async decreaseFromCart(productID) {
-    const updatedCart = this.cart
-      .map((product) => {
-        if (product.productID === productID) {
-          return {
-            ...product,
-            quantity: product.quantity - 1,
-          };
-        }
-        return product;
-      })
-      .filter((product) => product.quantity > 0);
+            return {
+              ...product.toObject(),
+              quantity: cartItem.quantity,
+            };
+          })
+        );
 
-    await this.updateCart(updatedCart);
-  }
-
-  async clearCart() {
-    await this.updateCart([]);
-  }
-
-  async getEnrichedCart() {
-    let totalPrice = 0;
-
-    const products = await Promise.all(
-      this.cart.map(async (cartItem) => {
-        const product = await Product.findById(cartItem.productID);
-
-        totalPrice += product.price * cartItem.quantity;
+        const filteredProducts = products.filter((product) => product !== null);
 
         return {
-          ...product,
-          quantity: cartItem.quantity,
+          products: filteredProducts,
+          totalPrice,
         };
-      })
-    );
+      },
+      async addToCart(productID, quantityChange = 1) {
+        const productIndex = this.cart.findIndex(
+          (item) => item.productID.toString() === productID.toString()
+        );
 
-    return {
-      products,
-      totalPrice,
-    };
+        if (productIndex !== -1) {
+          this.cart[productIndex].quantity += quantityChange;
+          if (this.cart[productIndex].quantity <= 0) {
+            this.cart.splice(productIndex, 1);
+          }
+        } else if (quantityChange > 0) {
+          this.cart.push({
+            productID,
+            quantity: quantityChange,
+          });
+        }
+
+        await this.save();
+      },
+      async decreaseFromCart(productID) {
+        await this.addToCart(productID, -1);
+      },
+      async removeFromCart(productID) {
+        // Filter out the product from the cart
+        this.cart = this.cart.filter(
+          (item) => item.productID.toString() !== productID.toString()
+        );
+
+        // Save the updated user document with the modified cart data
+        await this.save();
+      },
+      async clearCart() {
+        this.cart = [];
+        await this.save();
+      },
+    },
   }
+);
 
-  static async findById(id) {
-    const client = await runMongo();
-
-    try {
-      const db = client.db('ShoppingExpress');
-      const collection = db.collection('users');
-
-      return await collection.findOne({ _id: new ObjectId(id) });
-    } catch (error) {
-      console.log(error.stack);
-      throw error;
-    }
-  }
-}
-
-module.exports = User;
+module.exports = mongoose.model('User', userSchema);

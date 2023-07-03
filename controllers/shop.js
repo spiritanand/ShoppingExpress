@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-const { STATUS, ERROR_MESSAGES } = require('../constants/constants');
+const { ERROR_MESSAGES } = require('../constants/constants');
 const Order = require('../models/order');
 const { handleCustomSequelizeError } = require('../utils/handleErrors');
 
@@ -8,7 +8,7 @@ const { handleCustomSequelizeError } = require('../utils/handleErrors');
  */
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.getAll();
+    const products = await Product.find();
 
     res.render('shop/index', {
       title: 'Shopping Express',
@@ -38,10 +38,6 @@ exports.getProductDetail = async (req, res) => {
 
 exports.getCart = async (req, res) => {
   try {
-    const cart = await req.user?.cart;
-
-    if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
-
     const { products, totalPrice } = await req.user.getEnrichedCart();
 
     res.render('shop/cart', {
@@ -112,10 +108,6 @@ exports.getCheckout = (req, res) => {
 
 exports.getOrders = async (req, res) => {
   try {
-    const user = req?.user;
-
-    if (!user) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
-
     const orders = await Order.getAllByUserID(req.user.id);
 
     res.render('shop/orders', {

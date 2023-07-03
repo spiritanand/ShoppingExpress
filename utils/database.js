@@ -1,16 +1,14 @@
-const { MongoClient } = require('mongodb');
+const mongoose = require('mongoose');
 
-const uri = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@shoppingexpress.jcqolcl.mongodb.net/?retryWrites=true&w=majority`;
+const dbName = 'ShoppingExpress';
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri);
+const uri = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@shoppingexpress.jcqolcl.mongodb.net/${dbName}?retryWrites=true&w=majority`;
 
 async function runMongo() {
   try {
-    await client.connect();
-    return client;
+    await mongoose.connect(uri);
   } catch (error) {
-    console.error('Error connecting to MongoDB Atlas:', error);
+    console.error('Error connecting to MongoDB', error);
     throw error;
   }
 }

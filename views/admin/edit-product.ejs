@@ -17,7 +17,7 @@
 				>Name:</label>
 				<input type = "text"
 					   name = "name"
-					   productID = "name"
+					   id = "name"
 					   value = "<%= editMode ? product.name : ''; %>"
 					   class = "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 				>
@@ -29,11 +29,11 @@
 				>Image URL:</label>
 				<input type = "text"
 					   name = "imageURL"
-					   productID = "imageURL"
+					   id = "imageURL"
 					   value = "<%= editMode ? product.imageURL : ''; %>"
 					   class = "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 				>
-				<img productID = "previewImage" src = "<%= editMode ? product.imageURL : ''; %>" alt = "Image Preview"
+				<img id = "previewImage" src = "<%= editMode ? product.imageURL : ''; %>" alt = "Image Preview"
 					 class = "product-image mt-4 mx-auto"
 					 style = "<%= product?.imageURL ? 'display: block;' : 'display: none;'; %>"
 				>
@@ -45,7 +45,7 @@
 				>Price:</label>
 				<input type = "text"
 					   name = "price"
-					   productID = "price"
+					   id = "price"
 					   value = "<%= editMode ? product.price : ''; %>"
 					   class = "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 				>
@@ -57,7 +57,7 @@
 				>Quantity Left:</label>
 				<input type = "text"
 					   name = "quantity"
-					   productID = "quantity"
+					   id = "quantity"
 					   value = "<%= editMode ? product.quantity : ''; %>"
 					   class = "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 				>
@@ -69,7 +69,7 @@
 				>Description:</label>
 				<input type = "text"
 					   name = "description"
-					   productID = "description"
+					   id = "description"
 					   value = "<%= editMode ? product.description : ''; %>"
 					   class = "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 				>
@@ -78,7 +78,7 @@
 			<% if (editMode) { %>
 				<input type = "hidden"
 					   name = "productID"
-					   productID = "productID"
+					   id = "productID"
 					   value = "<%= product?._id; %>"
 				>
 			<% } %>

@@ -43,12 +43,10 @@ runMongo()
 app.use(async (req, res, next) => {
   try {
     const user = await User.findById('649dc1ea922cb55a934f277c');
-    const { email, name, cart, _id } = user;
 
-    // Creating a new user object and attaching it to the request
-    req.user = new User(name, email, cart, _id);
+    if (!user) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
 
-    if (!req.user) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+    req.user = user;
 
     next();
   } catch (e) {
