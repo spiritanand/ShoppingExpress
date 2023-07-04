@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Product = require('./product');
 
 const userSchema = new mongoose.Schema(
   {
@@ -24,18 +25,17 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
+    totalPrice: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     methods: {
       async addToCart(productID, quantityChange = 1) {
-        const productIndex = this.cart.findIndex((item) => {
-          const { _id } = item.productID;
-
-          return (
-            _id.toString() === productID.toString() ||
-            item.productID.toString() === productID.toString()
-          );
-        });
+        const productIndex = this.cart.findIndex(
+          (item) => item.productID.toString() === productID.toString()
+        );
 
         if (productIndex !== -1) {
           this.cart[productIndex].quantity += quantityChange;
@@ -56,13 +56,9 @@ const userSchema = new mongoose.Schema(
       },
       async removeFromCart(productID) {
         // Filter out the product from the cart
-        this.cart = this.cart.filter((item) => {
-          const { _id } = item.productID;
-
-          if (_id) return _id.toString() !== productID.toString();
-
-          return item.productID.toString() !== productID.toString();
-        });
+        this.cart = this.cart.filter(
+          (item) => item.productID.toString() !== productID.toString()
+        );
 
         // Save the updated user document with the modified cart data
         await this.save();
@@ -72,15 +68,47 @@ const userSchema = new mongoose.Schema(
         await this.save();
       },
     },
-    statics: {
-      getTotalPrice(cart) {
-        return cart.reduce(
-          (total, item) => total + item.productID.price * item.quantity,
-          0
-        );
-      },
-    },
   }
 );
+
+// Fetch the products in the cart and calculate the total price
+userSchema.pre('save', async function (next) {
+  try {
+    const products = await Promise.all(
+      this.cart.map(async (cartItem) => {
+        const product = await Product.findById(cartItem.productID);
+        return product
+          ? {
+              ...product.toObject(),
+              quantity: cartItem.quantity,
+            }
+          : null;
+      })
+    );
+
+    this.cart = products
+      .filter((product) => product !== null)
+      .map((product) => {
+        const { _id, quantity } = product;
+        return {
+          productID: _id,
+          quantity,
+        };
+      });
+
+    this.totalPrice = products.reduce((acc, product) => {
+      if (product) {
+        // eslint-disable-next-line no-param-reassign
+        acc += product.price * product.quantity;
+      }
+
+      return acc;
+    }, 0);
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = mongoose.model('User', userSchema);

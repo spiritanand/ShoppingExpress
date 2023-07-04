@@ -39,14 +39,19 @@ exports.getProductDetail = async (req, res) => {
 
 exports.getCart = async (req, res) => {
   try {
-    const products = req.user?.cart;
-    const totalPrice = User.getTotalPrice(req.user?.cart);
+    const user = await User.findById('649dc1ea922cb55a934f277c')
+      .populate('cart.productID')
+      .exec();
+
+    const products = user?.cart;
+
+    await user.save(); // to fetch the totalPrice
 
     res.render('shop/cart', {
       title: 'Shopping Cart',
       path: '/cart',
       products,
-      totalPrice,
+      totalPrice: user.totalPrice,
     });
   } catch (e) {
     handleCustomSequelizeError(e, res);
@@ -128,10 +133,9 @@ exports.postCheckout = async (req, res) => {
 
     if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
-    const order = new Order(req.user.id, cart);
+    const order = new Order({});
 
-    const enrichedCart = await req.user.getEnrichedCart();
-    await order.create(enrichedCart);
+    await order.save();
     await req.user.clearCart();
 
     res.redirect('/orders');
