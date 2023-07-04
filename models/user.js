@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const Product = require('./product');
 
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -28,40 +27,15 @@ const userSchema = mongoose.Schema(
   },
   {
     methods: {
-      async getEnrichedCart() {
-        let totalPrice = 0;
-
-        const products = await Promise.all(
-          this.cart.map(async (cartItem) => {
-            const product = await Product.findById(cartItem.productID);
-
-            // If product is not found, remove it from the enriched cart.
-            // This way anywhere we are presenting the cart or storing the order, we can be sure that the
-            // product exists.
-            if (!product) {
-              return null;
-            }
-
-            totalPrice += product.price * cartItem.quantity;
-
-            return {
-              ...product.toObject(),
-              quantity: cartItem.quantity,
-            };
-          })
-        );
-
-        const filteredProducts = products.filter((product) => product !== null);
-
-        return {
-          products: filteredProducts,
-          totalPrice,
-        };
-      },
       async addToCart(productID, quantityChange = 1) {
-        const productIndex = this.cart.findIndex(
-          (item) => item.productID.toString() === productID.toString()
-        );
+        const productIndex = this.cart.findIndex((item) => {
+          const { _id } = item.productID;
+
+          return (
+            _id.toString() === productID.toString() ||
+            item.productID.toString() === productID.toString()
+          );
+        });
 
         if (productIndex !== -1) {
           this.cart[productIndex].quantity += quantityChange;
@@ -82,9 +56,13 @@ const userSchema = mongoose.Schema(
       },
       async removeFromCart(productID) {
         // Filter out the product from the cart
-        this.cart = this.cart.filter(
-          (item) => item.productID.toString() !== productID.toString()
-        );
+        this.cart = this.cart.filter((item) => {
+          const { _id } = item.productID;
+
+          if (_id) return _id.toString() !== productID.toString();
+
+          return item.productID.toString() !== productID.toString();
+        });
 
         // Save the updated user document with the modified cart data
         await this.save();
@@ -92,6 +70,14 @@ const userSchema = mongoose.Schema(
       async clearCart() {
         this.cart = [];
         await this.save();
+      },
+    },
+    statics: {
+      getTotalPrice(cart) {
+        return cart.reduce(
+          (total, item) => total + item.productID.price * item.quantity,
+          0
+        );
       },
     },
   }

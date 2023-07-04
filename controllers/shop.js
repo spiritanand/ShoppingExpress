@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const User = require('../models/user');
 const { ERROR_MESSAGES } = require('../constants/constants');
 const Order = require('../models/order');
 const { handleCustomSequelizeError } = require('../utils/handleErrors');
@@ -38,7 +39,8 @@ exports.getProductDetail = async (req, res) => {
 
 exports.getCart = async (req, res) => {
   try {
-    const { products, totalPrice } = await req.user.getEnrichedCart();
+    const products = req.user?.cart;
+    const totalPrice = User.getTotalPrice(req.user?.cart);
 
     res.render('shop/cart', {
       title: 'Shopping Cart',

@@ -42,8 +42,10 @@ runMongo()
 // middleware for storing user
 app.use(async (req, res, next) => {
   try {
-    const user = await User.findById('649dc1ea922cb55a934f277c');
-
+    const user = await User.findById('649dc1ea922cb55a934f277c')
+      .populate('cart.productID')
+      .exec();
+    
     if (!user) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
 
     req.user = user;
