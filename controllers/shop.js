@@ -151,6 +151,9 @@ exports.postCheckout = async (req, res) => {
     });
 
     await order.save();
+
+    await Product.updateQuantityAfterOrder(products);
+
     await req.user.clearCart();
 
     res.redirect('/orders');
@@ -165,6 +168,8 @@ exports.postCancelOrder = async (req, res) => {
     const order = await Order.cancel(orderID);
 
     if (!order) throw new Error(ERROR_MESSAGES.ORDER_NOT_FOUND);
+
+    await Product.updateQuantityAfterOrder(order.cart, false);
 
     res.redirect('/orders');
   } catch (e) {

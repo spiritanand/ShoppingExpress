@@ -1,7 +1,7 @@
 {
 	"name": "shopping-express",
 	"version": "1.0.0",
-	"description": "Basic express e-commerce app",
+	"description": "Express e-commerce app",
 	"main": "app.js",
 	"scripts": {
 		"start": "nodemon app.js",

@@ -98,7 +98,7 @@ const userSchema = new mongoose.Schema(
         );
 
         this.cart = this.cart.filter((cartItem, index) => {
-          if (!products[index]) {
+          if (!products[index] || cartItem.quantity <= 0) {
             return false;
           }
 
