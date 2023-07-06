@@ -29,7 +29,7 @@
 					</h2>
 					<ul class = "mb-4">
 						<% order.cart.forEach((product) => { %>
-							<li><%= product.name %> (<%= product.quantity %>)</li>
+							<li><%= product.productID.name %> (<%= product.quantity %>)</li>
 						<% }) %>
 						<p class = "mb-2">Total Price: $ <%= order.totalPrice %></p>
 					</ul>

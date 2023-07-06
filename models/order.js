@@ -5,10 +5,19 @@ const { productSchema } = require('./product');
 const orderSchema = new mongoose.Schema(
   {
     userID: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
     },
-    cart: [productSchema],
+    cart: [
+      {
+        productID: productSchema,
+        quantity: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
     totalPrice: {
       type: Number,
       required: true,

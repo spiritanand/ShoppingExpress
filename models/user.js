@@ -67,48 +67,57 @@ const userSchema = new mongoose.Schema(
         this.cart = [];
         await this.save();
       },
+      async calculateTotalPrice() {
+        const products = await Promise.all(
+          this.cart.map(async (cartItem) => {
+            const product = await Product.findById(cartItem.productID);
+            return product
+              ? {
+                  ...product.toObject(),
+                  quantity: cartItem.quantity,
+                }
+              : null;
+          })
+        );
+
+        this.totalPrice = products.reduce((acc, product) => {
+          if (product) {
+            // eslint-disable-next-line no-param-reassign
+            acc += product.price * product.quantity;
+          }
+
+          return acc;
+        }, 0);
+      },
+      async validateCart() {
+        const products = await Promise.all(
+          this.cart.map(async (cartItem) => {
+            const product = await Product.findById(cartItem.productID);
+            return product ? product.toObject() : null;
+          })
+        );
+
+        this.cart = this.cart.filter((cartItem, index) => {
+          if (!products[index]) {
+            return false;
+          }
+
+          if (cartItem.quantity > products[index].quantity) {
+            // eslint-disable-next-line no-param-reassign
+            cartItem.quantity = products[index].quantity;
+          }
+
+          return true;
+        });
+      },
     },
   }
 );
 
 // Fetch the products in the cart and calculate the total price
-userSchema.pre('save', async function (next) {
-  try {
-    const products = await Promise.all(
-      this.cart.map(async (cartItem) => {
-        const product = await Product.findById(cartItem.productID);
-        return product
-          ? {
-              ...product.toObject(),
-              quantity: cartItem.quantity,
-            }
-          : null;
-      })
-    );
-
-    this.cart = products
-      .filter((product) => product !== null)
-      .map((product) => {
-        const { _id, quantity } = product;
-        return {
-          productID: _id,
-          quantity,
-        };
-      });
-
-    this.totalPrice = products.reduce((acc, product) => {
-      if (product) {
-        // eslint-disable-next-line no-param-reassign
-        acc += product.price * product.quantity;
-      }
-
-      return acc;
-    }, 0);
-
-    next();
-  } catch (err) {
-    next(err);
-  }
+userSchema.pre('save', async function () {
+  await this.calculateTotalPrice();
+  await this.validateCart();
 });
 
 module.exports = mongoose.model('User', userSchema);

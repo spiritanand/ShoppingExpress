@@ -1,6 +1,6 @@
 const Product = require('../models/product');
 const User = require('../models/user');
-const { ERROR_MESSAGES } = require('../constants/constants');
+const { ERROR_MESSAGES, STATUS } = require('../constants/constants');
 const Order = require('../models/order');
 const { handleCustomSequelizeError } = require('../utils/handleErrors');
 
@@ -115,7 +115,9 @@ exports.getCheckout = (req, res) => {
 
 exports.getOrders = async (req, res) => {
   try {
-    const orders = await Order.getAllByUserID(req.user.id);
+    const { _id } = req.user;
+
+    const orders = await Order.find({ userID: _id });
 
     res.render('shop/orders', {
       title: 'Orders',
@@ -129,11 +131,24 @@ exports.getOrders = async (req, res) => {
 
 exports.postCheckout = async (req, res) => {
   try {
-    const cart = await req.user?.cart;
+    const user = await User.findById('649dc1ea922cb55a934f277c')
+      .populate('cart.productID')
+      .exec();
 
-    if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+    const products = user?.cart;
 
-    const order = new Order({});
+    if (!products) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+
+    const { _id } = user;
+
+    user.save(); // to fetch the totalPrice
+
+    const order = new Order({
+      userID: _id,
+      cart: products,
+      totalPrice: user.totalPrice,
+      status: STATUS.SUCCESS,
+    });
 
     await order.save();
     await req.user.clearCart();
