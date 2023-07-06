@@ -10,7 +10,7 @@ const { get404 } = require('./controllers/error');
 const runMongo = require('./utils/database');
 const User = require('./models/user');
 const { ERROR_MESSAGES } = require('./constants/constants');
-const { handleCustomSequelizeError } = require('./utils/handleErrors');
+const { handleCustomDBError } = require('./utils/handleErrors');
 
 const app = express();
 const PORT = 8080;
@@ -50,7 +50,7 @@ app.use(async (req, res, next) => {
 
     next();
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 });
 

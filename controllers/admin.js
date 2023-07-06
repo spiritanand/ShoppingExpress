@@ -1,6 +1,6 @@
 const Product = require('../models/product');
 const { ERROR_MESSAGES } = require('../constants/constants');
-const { handleCustomSequelizeError } = require('../utils/handleErrors');
+const { handleCustomDBError } = require('../utils/handleErrors');
 
 exports.getAdminProducts = async (req, res) => {
   try {
@@ -12,7 +12,7 @@ exports.getAdminProducts = async (req, res) => {
       products,
     });
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
 
@@ -44,7 +44,7 @@ exports.postAddProduct = async (req, res) => {
 
     res.redirect('/');
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
 
@@ -66,7 +66,7 @@ exports.getEditProduct = async (req, res) => {
       editMode,
     });
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
 
@@ -82,7 +82,7 @@ exports.postEditProduct = async (req, res) => {
 
     res.redirect(`/products/${productID}`);
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
 
@@ -94,6 +94,6 @@ exports.postDeleteProduct = async (req, res) => {
 
     res.redirect('/admin/products');
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };

@@ -34,13 +34,13 @@ const productSchema = new mongoose.Schema(
         const updateQuantity = decrease ? -1 : 1;
 
         const productUpdates = cart.map((cartItem) => {
-          const { productID, quantity } = cartItem;
+          const { productID, buyQuantity } = cartItem;
           const { _id: productObjectID } = productID;
 
           return {
             updateOne: {
               filter: { _id: productObjectID },
-              update: { $inc: { quantity: updateQuantity * quantity } },
+              update: { $inc: { quantity: updateQuantity * buyQuantity } },
             },
           };
         });

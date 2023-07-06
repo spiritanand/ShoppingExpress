@@ -9,15 +9,23 @@ const orderSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    cart: [
-      {
-        productID: productSchema,
-        buyQuantity: {
-          type: Number,
-          required: true,
+    cart: {
+      type: [
+        {
+          productID: productSchema,
+          buyQuantity: {
+            type: Number,
+            required: true,
+          },
         },
+      ],
+      validate: {
+        validator(cart) {
+          return cart?.length > 0;
+        },
+        message: 'Cart cannot be empty.',
       },
-    ],
+    },
     totalPrice: {
       type: Number,
       required: true,

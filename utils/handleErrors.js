@@ -13,7 +13,7 @@ function handleInternalServerError(e, res) {
   handleSequelizeError(e, res, 500, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 }
 
-function handleCustomSequelizeError(e, res) {
+function handleCustomDBError(e, res) {
   if (e.message === ERROR_MESSAGES.INTERNAL_SERVER_ERROR)
     handleInternalServerError(e, res);
   else if (e.message === ERROR_MESSAGES.NOT_LOGGED_IN)
@@ -28,7 +28,5 @@ function handleCustomSequelizeError(e, res) {
 }
 
 module.exports = {
-  handleNotLoggedInUser,
-  handleResourceNotFound,
-  handleCustomSequelizeError,
+  handleCustomDBError,
 };

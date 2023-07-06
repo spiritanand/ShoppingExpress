@@ -2,7 +2,7 @@ const Product = require('../models/product');
 const User = require('../models/user');
 const { ERROR_MESSAGES, STATUS } = require('../constants/constants');
 const Order = require('../models/order');
-const { handleCustomSequelizeError } = require('../utils/handleErrors');
+const { handleCustomDBError } = require('../utils/handleErrors');
 
 /**
  * Shows the homepage
@@ -17,7 +17,7 @@ exports.getProducts = async (req, res) => {
       products,
     });
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
 
@@ -33,7 +33,7 @@ exports.getProductDetail = async (req, res) => {
       product,
     });
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
 
@@ -54,7 +54,7 @@ exports.getCart = async (req, res) => {
       totalPrice: user.totalPrice,
     });
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
 
@@ -70,7 +70,7 @@ exports.postAddToCart = async (req, res) => {
 
     res.redirect('/cart');
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
 
@@ -86,7 +86,7 @@ exports.postDecreaseProductFromCart = async (req, res) => {
 
     res.redirect('/cart');
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
 
@@ -102,7 +102,7 @@ exports.postRemoveProductFromCart = async (req, res) => {
 
     res.redirect('/cart');
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
 
@@ -125,7 +125,7 @@ exports.getOrders = async (req, res) => {
       orders,
     });
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
 
@@ -158,7 +158,7 @@ exports.postCheckout = async (req, res) => {
 
     res.redirect('/orders');
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
 
@@ -173,6 +173,6 @@ exports.postCancelOrder = async (req, res) => {
 
     res.redirect('/orders');
   } catch (e) {
-    handleCustomSequelizeError(e, res);
+    handleCustomDBError(e, res);
   }
 };
