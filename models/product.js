@@ -30,11 +30,11 @@ const productSchema = new mongoose.Schema(
   },
   {
     statics: {
-      async updateQuantityAfterOrder(products, decrease = true) {
+      async updateQuantityAfterOrder(cart, decrease = true) {
         const updateQuantity = decrease ? -1 : 1;
 
-        const productUpdates = products.map((product) => {
-          const { productID, quantity } = product;
+        const productUpdates = cart.map((cartItem) => {
+          const { productID, quantity } = cartItem;
           const { _id: productObjectID } = productID;
 
           return {

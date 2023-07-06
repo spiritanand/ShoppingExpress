@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
           ref: 'Product',
           required: true,
         },
-        quantity: {
+        buyQuantity: {
           type: Number,
           required: true,
         },
@@ -38,14 +38,14 @@ const userSchema = new mongoose.Schema(
         );
 
         if (productIndex !== -1) {
-          this.cart[productIndex].quantity += quantityChange;
-          if (this.cart[productIndex].quantity <= 0) {
+          this.cart[productIndex].buyQuantity += quantityChange;
+          if (this.cart[productIndex].buyQuantity <= 0) {
             this.cart.splice(productIndex, 1);
           }
         } else if (quantityChange > 0) {
           this.cart.push({
             productID,
-            quantity: quantityChange,
+            buyQuantity: quantityChange,
           });
         }
 
@@ -68,43 +68,38 @@ const userSchema = new mongoose.Schema(
         await this.save();
       },
       async calculateTotalPrice() {
-        const products = await Promise.all(
+        const enrichedCart = await Promise.all(
           this.cart.map(async (cartItem) => {
             const product = await Product.findById(cartItem.productID);
-            return product
+            return product && product.quantity > 0
               ? {
                   ...product.toObject(),
-                  quantity: cartItem.quantity,
+                  buyQuantity: cartItem.buyQuantity,
                 }
               : null;
           })
         );
 
-        this.totalPrice = products.reduce((acc, product) => {
+        this.totalPrice = enrichedCart.reduce((acc, product) => {
           if (product) {
             // eslint-disable-next-line no-param-reassign
-            acc += product.price * product.quantity;
+            acc += product.price * product.buyQuantity;
           }
 
           return acc;
         }, 0);
-      },
-      async validateCart() {
-        const products = await Promise.all(
-          this.cart.map(async (cartItem) => {
-            const product = await Product.findById(cartItem.productID);
-            return product ? product.toObject() : null;
-          })
-        );
 
+        await this.validateCart(enrichedCart);
+      },
+      async validateCart(enrichedCart) {
         this.cart = this.cart.filter((cartItem, index) => {
-          if (!products[index] || cartItem.quantity <= 0) {
+          if (!enrichedCart[index] || cartItem.buyQuantity <= 0) {
             return false;
           }
 
-          if (cartItem.quantity > products[index].quantity) {
+          if (cartItem.buyQuantity > enrichedCart[index].quantity) {
             // eslint-disable-next-line no-param-reassign
-            cartItem.quantity = products[index].quantity;
+            cartItem.buyQuantity = enrichedCart[index].quantity;
           }
 
           return true;
@@ -114,10 +109,9 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Fetch the products in the cart and calculate the total price
+// Validate products in the cart and calculate the total price
 userSchema.pre('save', async function () {
   await this.calculateTotalPrice();
-  await this.validateCart();
 });
 
 module.exports = mongoose.model('User', userSchema);

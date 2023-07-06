@@ -28,8 +28,8 @@
 						</span>
 					</h2>
 					<ul class = "mb-4">
-						<% order.cart.forEach((product) => { %>
-							<li><%= product.productID.name %> (<%= product.quantity %>)</li>
+						<% order.cart.forEach((cartItem) => { %>
+							<li><%= cartItem.productID.name %> (<%= cartItem.buyQuantity %>)</li>
 						<% }) %>
 						<p class = "mb-2">Total Price: $ <%= order.totalPrice %></p>
 					</ul>

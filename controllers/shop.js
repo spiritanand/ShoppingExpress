@@ -43,14 +43,14 @@ exports.getCart = async (req, res) => {
       .populate('cart.productID')
       .exec();
 
-    const products = user?.cart;
+    const cart = user?.cart;
 
     await user.save(); // to fetch the totalPrice
 
     res.render('shop/cart', {
       title: 'Shopping Cart',
       path: '/cart',
-      products,
+      cart,
       totalPrice: user.totalPrice,
     });
   } catch (e) {
@@ -135,9 +135,9 @@ exports.postCheckout = async (req, res) => {
       .populate('cart.productID')
       .exec();
 
-    const products = user?.cart;
+    const cart = user?.cart;
 
-    if (!products) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+    if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
     const { _id } = user;
 
@@ -145,14 +145,14 @@ exports.postCheckout = async (req, res) => {
 
     const order = new Order({
       userID: _id,
-      cart: products,
+      cart,
       totalPrice: user.totalPrice,
       status: STATUS.SUCCESS,
     });
 
     await order.save();
 
-    await Product.updateQuantityAfterOrder(products);
+    await Product.updateQuantityAfterOrder(cart);
 
     await req.user.clearCart();
 

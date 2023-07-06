@@ -8,7 +8,7 @@
 	</div>
 	<div class = "px-4 py-2">
 		<!--		render empty cart if products does not exist or no products added-->
-		<% if (!products || products?.length === 0) { %>
+		<% if (!cart || cart?.length === 0) { %>
 			<div class = "flex items-center justify-center px-4 py-6">
 				<p class = "text-xl text-gray-500">Your cart is empty.</p>
 			</div>
@@ -21,31 +21,31 @@
 			</div>
 		<% } else{ %>
 		<!--		render items if products exist in cart-->
-			<% if(products && products?.length > 0) { %>
+			<% if(cart && cart?.length > 0) { %>
 				<ul>
-					<% products?.forEach(product =>  { %>
+					<% cart?.forEach(cartItem =>  { %>
 						<!-- Cart Item -->
-						<% if(product.productID) { %>
+						<% if(cartItem.productID) { %>
 							<li class = "flex flex-col md:flex-row items-center justify-around py-4 border-b">
 								<div class = "flex flex-col md:flex-row items-center justify-center gap-4 w-72">
-									<a href = '/products/<%= product.productID._id; %>'>
+									<a href = '/products/<%= cartItem.productID._id; %>'>
 
 										<img class = "h-24 w-auto object-contain"
-											 src = "<%= product.productID.imageURL; %>"
-											 alt = "<%= product.productID.name %>"
+											 src = "<%= cartItem.productID.imageURL; %>"
+											 alt = "<%= cartItem.productID.name %>"
 										>
 									</a>
 									<div class = "ml-4">
-										<p class = "font-semibold break-words"><%= product.productID.name; %></p>
+										<p class = "font-semibold break-words"><%= cartItem.productID.name; %></p>
 										<p class = "text-sm text-gray-500">Unit Price:
-																		   $<%= product.productID.price; %></p>
+																		   $<%= cartItem.productID.price; %></p>
 									</div>
 								</div>
 								<div class = "flex items-center mt-4 md:mt-0">
 									<!-- Decrease button -->
 									<form action = "/cart/decrease" method = "post">
 										<input type = "hidden" name = "productID"
-											   value = "<%= product.productID._id %>"
+											   value = "<%= cartItem.productID._id %>"
 										>
 										<button class = "text-red-500 focus:outline-none p-2">
 											<svg class = "h-6 w-6" fill = "none" stroke = "currentColor"
@@ -60,11 +60,11 @@
 										</button>
 									</form>
 									<!-- Product quantity -->
-									<p class = "mx-4 font-semibold"><%= product.quantity %></p>
+									<p class = "mx-4 font-semibold"><%= cartItem.buyQuantity %></p>
 									<!-- Increase button -->
 									<form action = "/cart/add" method = "post">
 										<input type = "hidden" name = "productID"
-											   value = "<%= product.productID._id %>"
+											   value = "<%= cartItem.productID._id %>"
 										>
 										<button class = "text-green-500 focus:outline-none p-2">
 											<svg class = "h-6 w-6" fill = "none" stroke = "currentColor"
@@ -84,7 +84,7 @@
 									<div class = "flex justify-between items-center">
 										<form action = "/cart/remove" method = "post">
 											<input type = "hidden" name = "productID"
-												   value = "<%= product.productID._id %>"
+												   value = "<%= cartItem.productID._id %>"
 											>
 											<button class = "text-red-500 focus:outline-none p-2">
 												<svg class = "h-6 w-6" fill = "none" stroke = "currentColor"
