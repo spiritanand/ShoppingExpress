@@ -8,7 +8,6 @@ exports.getAdminProducts = async (req, res) => {
 
     res.render('admin/products', {
       title: 'Products (Admin)',
-      path: '/admin/products',
       products,
     });
   } catch (e) {
@@ -19,7 +18,6 @@ exports.getAdminProducts = async (req, res) => {
 exports.getAddProduct = (req, res) => {
   res.render('admin/edit-product', {
     title: 'Add Product',
-    path: '/admin/add-product',
     product: {},
     editMode: false,
   });
@@ -61,7 +59,6 @@ exports.getEditProduct = async (req, res) => {
 
     res.render('admin/edit-product', {
       title: `Edit - ${product.name}`,
-      path: '/admin/edit-product',
       product,
       editMode,
     });

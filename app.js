@@ -45,7 +45,8 @@ app.use(async (req, res, next) => {
     const user = await User.findById('649dc1ea922cb55a934f277c');
 
     res.locals.isUserLoggedIn = Boolean(null);
-
+    res.locals.path = req.path;
+    
     if (!user) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
 
     req.user = user;

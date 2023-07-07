@@ -13,7 +13,6 @@ exports.getProducts = async (req, res) => {
 
     res.render('shop/index', {
       title: 'Shopping Express',
-      path: '/home',
       products,
     });
   } catch (e) {
@@ -29,7 +28,6 @@ exports.getProductDetail = async (req, res) => {
 
     res.render('shop/product-detail', {
       title: `Product Detail - ${product?.name}`,
-      path: '/product-detail',
       product,
     });
   } catch (e) {
@@ -49,7 +47,6 @@ exports.getCart = async (req, res) => {
 
     res.render('shop/cart', {
       title: 'Shopping Cart',
-      path: '/cart',
       cart,
       totalPrice: user.totalPrice,
     });
@@ -121,7 +118,6 @@ exports.getOrders = async (req, res) => {
 
     res.render('shop/orders', {
       title: 'Orders',
-      path: '/orders',
       orders,
     });
   } catch (e) {
