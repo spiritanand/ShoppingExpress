@@ -1,0 +1,56 @@
+<%- include('../includes/head.ejs') %>
+</head>
+
+<body class = "bg-gray-200">
+<%- include('../includes/navbar.ejs') %>
+<main class = "min-h-screen bg-gray-100 flex flex-col gap-16 p-8 sm:px-6 lg:px-8 mx-auto sm:w-full sm:max-w-md">
+	<h2 class = "text-center text-4xl font-extrabold text-gray-900">Sign Up</h2>
+	<form class = "mt-8" action = "#" method = "POST">
+		<fieldset class = "rounded-md shadow-sm">
+			<div>
+				<label for = "email" class = "sr-only">Email</label>
+				<input id = "email" name = "email" type = "email" autocomplete = "email" required
+					   class = "appearance-none rounded-none relative block w-full px-3 py-2 placeholder-gray-500
+                        text-gray-900 focus:outline-none focus:ring-primary focus:border-primary
+                        focus:z-10 sm:text-sm"
+					   placeholder = "Email address"
+				>
+			</div>
+			<div class = 'my-8'>
+				<label for = "username" class = "sr-only">Username</label>
+				<input id = "username" name = "username" type = "text" autocomplete = "username" required
+					   class = "appearance-none rounded-none relative block w-full px-3 py-2 placeholder-gray-500
+                        text-gray-900 focus:outline-none focus:ring-primary focus:border-primary
+                        focus:z-10 sm:text-sm mt-3"
+					   placeholder = "Username"
+				>
+			</div>
+			<div>
+				<label for = "password" class = "sr-only">Password</label>
+				<input id = "password" name = "password" type = "password" autocomplete = "new-password"
+					   required
+					   class = "appearance-none rounded-none relative block w-full px-3 py-2 placeholder-gray-500
+                        text-gray-900 focus:outline-none focus:ring-primary focus:border-primary
+                        focus:z-10 sm:text-sm mt-3"
+					   placeholder = "Password"
+				>
+			</div>
+		</fieldset>
+
+		<div class = 'mt-20'>
+			<button
+					type = "submit"
+					class = "group relative w-1/2 mx-auto md:w-2/3 flex justify-center py-2 px-4 border border-transparent font-bold text-md rounded-full text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light transition-colors duration-300 sm:text-lg "
+			>
+				Sign Up
+			</button>
+		</div>
+	</form>
+	<div>
+		<p class = "text-center text-gray-500">
+			Already signed up?
+			<a href = "/login" class = "text-primary font-medium hover:underline">Log in here</a>.
+		</p>
+	</div>
+</main>
+<%- include('../includes/end.ejs') %>

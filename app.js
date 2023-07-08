@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 const { get404 } = require('./controllers/error');
 const runMongo = require('./utils/database');
 const User = require('./models/user');
@@ -46,7 +47,7 @@ app.use(async (req, res, next) => {
 
     res.locals.isUserLoggedIn = Boolean(null);
     res.locals.path = req.path;
-    
+
     if (!user) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
 
     req.user = user;
@@ -61,5 +62,6 @@ app.use(async (req, res, next) => {
 // always place more specific routes on the top
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 app.use(get404);
