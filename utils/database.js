@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 
-const dbName = 'ShoppingExpress';
-
-const uri = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@shoppingexpress.jcqolcl.mongodb.net/${dbName}?retryWrites=true&w=majority`;
+const uri = `${process.env.MONGO_URI}?retryWrites=true&w=majority`;
 
 async function runMongo() {
   try {

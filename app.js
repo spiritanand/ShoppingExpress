@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const MongoDbStore = require('connect-mongodb-session')(session);
 
 require('dotenv').config();
 
@@ -16,14 +18,30 @@ const { handleCustomDBError } = require('./utils/handleErrors');
 const app = express();
 const PORT = 8080;
 
+const store = new MongoDbStore({
+  uri: process.env.MONGO_URI,
+  collection: 'sessions',
+});
+
 // globally setting values across our app
 app.set('view engine', 'ejs');
 // app.set('views', 'views'); // set automatically. no need to call explicitly
 
+// To parse the body of incoming requests
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+// session middleware
+app.use(
+  session({
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+    store,
+  })
+);
 
 // connect to database
 runMongo()
@@ -40,22 +58,11 @@ runMongo()
     console.log(err.stack);
   });
 
-// middleware for storing user
+// general middleware for storing user
 app.use(async (req, res, next) => {
-  try {
-    const user = await User.findById('649dc1ea922cb55a934f277c');
-
-    res.locals.isUserLoggedIn = Boolean(null);
-    res.locals.path = req.path;
-
-    if (!user) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
-
-    req.user = user;
-
-    next();
-  } catch (e) {
-    handleCustomDBError(e, res);
-  }
+  res.locals.isUserLoggedIn = req?.session?.user;
+  res.locals.path = req.path;
+  next();
 });
 
 // handling routes

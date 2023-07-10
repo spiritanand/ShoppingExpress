@@ -18,9 +18,11 @@
 							/>
 						</a>
 						<p class = "text-gray-600 mb-2">Price: $<%= product?.price; %></p>
-						<form action = "/cart" method = "POST">
-							<%- include('../includes/add-to-cart.ejs', {product}) %>
-						</form>
+						<% if (isUserLoggedIn) { %>
+							<form action = "/cart" method = "POST">
+								<%- include('../includes/add-to-cart.ejs', {product}) %>
+							</form>
+						<% } %>
 					</div>
 					<p class = "text-gray-600">Quantity Left: <%= product?.quantity; %></p>
 				</article>

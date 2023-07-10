@@ -3,7 +3,7 @@
 
 <body class = "bg-gray-200">
 <%- include('../includes/navbar.ejs') %>
-<article class = "container mx-auto py-8 min-h-screen">
+<article class = "container mx-auto p-8 min-h-screen">
 	<div class = "bg-white rounded-lg shadow-lg p-6">
 		<div class = "flex flex-col items-center mb-4">
 			<h2 class = "text-3xl font-bold mb-6"><%= product?.name; %></h2>
@@ -14,9 +14,11 @@
 			</a>
 			<p class = "text-gray-600 mb-2">Price: $<%= product?.price; %></p>
 			<p class = "text-gray-700 mt-4 mb-6 text-center"><%= product?.description %></p>
-			<form action = "/cart" method = "POST">
-				<%- include('../includes/add-to-cart.ejs', {product}) %>
-			</form>
+			<% if (isUserLoggedIn) { %>
+				<form action = "/cart" method = "POST">
+					<%- include('../includes/add-to-cart.ejs', {product}) %>
+				</form>
+			<% } %>
 		</div>
 		<p class = "text-gray-600">Quantity Left: <%= product?.quantity; %></p>
 	</div>
