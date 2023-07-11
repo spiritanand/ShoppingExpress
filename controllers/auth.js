@@ -46,11 +46,8 @@ exports.postLogin = async (req, res) => {
   // }
 
   try {
-    const user = await User.findById('649dc1ea922cb55a934f277c');
-
-    req.session.user = user;
-
-    req.user = user;
+    req.session.user = await User.findById('649dc1ea922cb55a934f277c');
+    await req.session.save(); // to be sure that the sessions is saved before redirecting
 
     res.redirect('/');
   } catch (e) {

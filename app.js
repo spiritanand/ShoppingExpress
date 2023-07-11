@@ -61,6 +61,9 @@ runMongo()
 // general middleware for storing user
 app.use(async (req, res, next) => {
   res.locals.isUserLoggedIn = req?.session?.user;
+
+  req.user = await User.findById(req?.session?.user?._id);
+
   res.locals.path = req.path;
   next();
 });

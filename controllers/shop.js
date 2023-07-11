@@ -37,7 +37,7 @@ exports.getProductDetail = async (req, res) => {
 
 exports.getCart = async (req, res) => {
   try {
-    const user = await User.findById('649dc1ea922cb55a934f277c')
+    const user = await User.findById(req.session?.user?._id)
       .populate('cart.productID')
       .exec();
 
@@ -59,11 +59,11 @@ exports.postAddToCart = async (req, res) => {
   const productID = req.body?.productID;
 
   try {
-    const cart = await req.session.user?.cart;
+    const cart = await req.user?.cart;
 
     if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
-    await req.session.user.addToCart(productID);
+    await req.user.addToCart(productID);
 
     res.redirect('/cart');
   } catch (e) {
@@ -75,11 +75,11 @@ exports.postDecreaseProductFromCart = async (req, res) => {
   const productID = req.body?.productID;
 
   try {
-    const cart = await req.session.user?.cart;
+    const cart = await req.user?.cart;
 
     if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
-    await req.session.user.decreaseFromCart(productID);
+    await req.user.decreaseFromCart(productID);
 
     res.redirect('/cart');
   } catch (e) {
@@ -91,11 +91,11 @@ exports.postRemoveProductFromCart = async (req, res) => {
   const productID = req.body?.productID;
 
   try {
-    const cart = await req.session.user?.cart;
+    const cart = await req.user?.cart;
 
     if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
-    await req.session.user.removeFromCart(productID);
+    await req.user.removeFromCart(productID);
 
     res.redirect('/cart');
   } catch (e) {
@@ -112,7 +112,7 @@ exports.getCheckout = (req, res) => {
 
 exports.getOrders = async (req, res) => {
   try {
-    const { _id } = req.session.user;
+    const { _id } = req.user;
 
     const orders = await Order.find({ userID: _id });
 
@@ -127,7 +127,7 @@ exports.getOrders = async (req, res) => {
 
 exports.postCheckout = async (req, res) => {
   try {
-    const user = await User.findById('649dc1ea922cb55a934f277c')
+    const user = await User.findById(req.session?.user?._id)
       .populate('cart.productID')
       .exec();
 
@@ -150,7 +150,7 @@ exports.postCheckout = async (req, res) => {
 
     await Product.updateQuantityAfterOrder(cart);
 
-    await req.session.user.clearCart();
+    await req.user.clearCart();
 
     res.redirect('/orders');
   } catch (e) {
