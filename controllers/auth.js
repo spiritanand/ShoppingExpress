@@ -9,8 +9,24 @@ exports.getSignUp = (req, res) => {
   });
 };
 
-exports.postSignUp = (req, res) => {
-  const { name, email, password } = req.body;
+exports.postSignUp = async (req, res) => {
+  const { username, email, password, type } = req.body;
+
+  const hashedPassword = await bcrypt.hash(password, 12);
+
+  const user = new User({
+    username,
+    email,
+    password: hashedPassword,
+    type,
+  });
+
+  await user.save();
+
+  req.session.user = user;
+  await req.session.save();
+
+  res.redirect('/');
 };
 
 exports.getLogin = (req, res) => {
@@ -20,38 +36,29 @@ exports.getLogin = (req, res) => {
 };
 
 exports.postLogin = async (req, res) => {
-  // try {
-  //   const { username, password } = req.body;
-  //
-  //   const user = await User.findOne({ username });
-  //   const email = await User.findOne({ email: username });
-  //
-  //   if (!user || !email) {
-  //     throw new Error(ERROR_MESSAGES.INVALID_USERNAME);
-  //   }
-  //
-  //   // Compare the password
-  //   const isPasswordValid = await bcrypt.compare(password, user.password);
-  //
-  //   if (!isPasswordValid) {
-  //     throw new Error(ERROR_MESSAGES.INVALID_USERNAME_PASSWORD);
-  //   }
-  //
-  //   // Store the user ID in the session
-  //   req.session.userId = user._id;
-  //
-  //   return res.redirect('/');
-  // } catch (error) {
-  //   return handleCustomDBError(error, res);
-  // }
-
   try {
-    req.session.user = await User.findById('649dc1ea922cb55a934f277c');
-    await req.session.save(); // to be sure that the sessions is saved before redirecting
+    const { username, password } = req.body;
 
-    res.redirect('/');
-  } catch (e) {
-    handleCustomDBError(e, res);
+    const user = await User.findOne({ username }).select('+password');
+    const email = await User.findOne({ email: username });
+
+    if (!user && !email) {
+      throw new Error(ERROR_MESSAGES.INVALID_USERNAME);
+    }
+
+    // Compare the password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new Error(ERROR_MESSAGES.INVALID_USERNAME_PASSWORD);
+    }
+
+    // Store the user ID in the session
+    req.session.user = user;
+
+    return res.redirect('/');
+  } catch (error) {
+    return handleCustomDBError(error, res);
   }
 };
 

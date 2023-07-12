@@ -4,7 +4,7 @@ const { handleCustomDBError } = require('../utils/handleErrors');
 
 exports.getAdminProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find({ userID: req.user._id });
 
     res.render('admin/products', {
       title: 'Products (Admin)',
@@ -51,9 +51,10 @@ exports.getEditProduct = async (req, res) => {
   const editMode = req.query?.edit === 'true';
 
   try {
-    if (!editMode) throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
-
     const product = await Product.findById(productID);
+
+    if (!editMode || product?.userID?.toString() !== req.user._id.toString())
+      throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
 
     if (!product) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
 

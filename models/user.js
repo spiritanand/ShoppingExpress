@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Product = require('./product');
+const { USER_TYPE } = require('../constants/constants');
 
 const userSchema = new mongoose.Schema(
   {
@@ -11,6 +12,16 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      select: false,
+    },
+    type: {
+      type: String,
+      enum: Object.values(USER_TYPE),
+      default: 'user',
     },
     cart: [
       {

@@ -8,12 +8,12 @@ require('dotenv').config();
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
 const { get404 } = require('./controllers/error');
 const runMongo = require('./utils/database');
 const User = require('./models/user');
-const { ERROR_MESSAGES } = require('./constants/constants');
-const { handleCustomDBError } = require('./utils/handleErrors');
+const { isAdmin, isLoggedIn } = require('./middlewares/isAuth');
 
 const app = express();
 const PORT = 8080;
@@ -61,6 +61,7 @@ runMongo()
 // general middleware for storing user
 app.use(async (req, res, next) => {
   res.locals.isUserLoggedIn = req?.session?.user;
+  res.locals.isAdmin = req?.session?.user?.type === 'admin';
 
   req.user = await User.findById(req?.session?.user?._id);
 
@@ -69,9 +70,9 @@ app.use(async (req, res, next) => {
 });
 
 // handling routes
-// always place more specific routes on the top
-app.use('/admin', adminRoutes);
-app.use(shopRoutes);
 app.use(authRoutes);
+app.use(publicRoutes);
+app.use(isLoggedIn, shopRoutes);
+app.use('/admin', isAdmin, adminRoutes);
 
 app.use(get404);

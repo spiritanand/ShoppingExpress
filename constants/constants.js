@@ -4,6 +4,11 @@ const STATUS = {
   CANCELLED: 'cancelled',
 };
 
+const USER_TYPE = {
+  ADMIN: 'admin',
+  USER: 'user',
+};
+
 const ERROR_MESSAGES = {
   PAGE_NOT_FOUND: 'Page Not Found',
   RESOURCE_NOT_FOUND: 'Resource not found',
@@ -23,5 +28,6 @@ const ERROR_MESSAGES = {
 
 module.exports = {
   STATUS,
+  USER_TYPE,
   ERROR_MESSAGES,
 };
