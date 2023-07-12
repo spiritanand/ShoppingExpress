@@ -7,11 +7,15 @@
 																  ? 'text-primary'
 																  : 'text-gray-300'; %>"
 	>Orders</a>
+<% } %>
+<% if (isUserLoggedIn && isAdmin) { %>
 	<a href = "/admin/add-product"
 	   class = "hover:text-primary px-3 py-2 <%= path === '/admin/add-product'
 												 ? 'text-primary'
 												 : 'text-gray-300'; %>"
-	>Add</a>
+
+	>
+		Add</a>
 	<a href = "/admin/products"
 	   class = "hover:text-primary px-3 py-2 <%= path === '/admin/products' || path ===
 												 '/admin/products'
