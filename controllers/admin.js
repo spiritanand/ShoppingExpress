@@ -4,7 +4,7 @@ const { handleCustomDBError } = require('../utils/handleErrors');
 
 exports.getAdminProducts = async (req, res) => {
   try {
-    const products = await Product.find({ userID: req.user._id });
+    const products = await Product.find({ userID: req.session.user._id });
 
     res.render('admin/products', {
       title: 'Products (Admin)',
@@ -74,6 +74,9 @@ exports.postEditProduct = async (req, res) => {
   try {
     const product = await Product.findById(productID);
 
+    if (product?.userID?.toString() !== req.session.user._id.toString())
+      throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
+
     Object.assign(product, updatedProduct);
 
     await product.save();
@@ -88,10 +91,13 @@ exports.postDeleteProduct = async (req, res) => {
   const productID = req.body?.productID;
 
   try {
-    await Product.findByIdAndDelete(productID);
+    await Product.deleteOne({
+      _id: productID,
+      userID: req.session.user._id,
+    });
 
     res.redirect('/admin/products');
   } catch (e) {
-    handleCustomDBError(e, res);
+    handleCustomDBError(new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS), res);
   }
 };

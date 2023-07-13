@@ -3,8 +3,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session);
-const csurf = require('csurf'); // csurf has been deprecated, but still works :) Also, I could not get any
-// other csrf package to work
+const csurf = require('csurf'); // csurf has been deprecated, but still works :)
+// Also, I could not get any other csrf package to work
 
 require('dotenv').config();
 

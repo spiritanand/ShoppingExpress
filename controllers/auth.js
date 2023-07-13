@@ -40,21 +40,26 @@ exports.postLogin = async (req, res) => {
     const { username, password } = req.body;
 
     const user = await User.findOne({ username }).select('+password');
-    const email = await User.findOne({ email: username });
+    const email = await User.findOne({ email: username }).select('+password');
 
     if (!user && !email) {
       throw new Error(ERROR_MESSAGES.INVALID_USERNAME);
     }
 
+    console.log({ email });
+
     // Compare the password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user?.password || email?.password
+    );
 
     if (!isPasswordValid) {
       throw new Error(ERROR_MESSAGES.INVALID_USERNAME_PASSWORD);
     }
 
     // Store the user ID in the session
-    req.session.user = user;
+    req.session.user = user || email;
 
     return res.redirect('/');
   } catch (error) {
