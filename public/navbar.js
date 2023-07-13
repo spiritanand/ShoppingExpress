@@ -10,8 +10,10 @@ mobileMenuButton?.addEventListener('click', () => {
 
 // Toggle the user menu
 const userMenuButton = document.querySelector('#user-menu-button');
-const userMenu = document.querySelector('#user-menu');
+const userMenus = document.querySelectorAll('#user-menu');
 
 userMenuButton?.addEventListener('click', () => {
-  userMenu.classList.toggle('hidden');
+  userMenus.forEach((userMenu) => {
+    userMenu.classList.toggle('hidden');
+  });
 });

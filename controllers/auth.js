@@ -71,3 +71,42 @@ exports.postLogout = (req, res) => {
     return res.redirect('/');
   });
 };
+
+exports.getResetPassword = (req, res) => {
+  // const { oldPassword, newPassword, confirmPassword } = req.body;
+  //
+  // console.log({
+  //   oldPassword,
+  //   newPassword,
+  //   confirmPassword,
+  // });
+  res.render('auth/reset-password', {
+    title: 'Reset Password',
+  });
+};
+
+exports.postResetPassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+
+    if (newPassword !== confirmPassword)
+      throw new Error(ERROR_MESSAGES.PASSWORDS_DO_NOT_MATCH);
+
+    const isPasswordValid = await bcrypt.compare(
+      oldPassword,
+      req.session.user.password
+    );
+
+    if (!isPasswordValid) throw new Error(ERROR_MESSAGES.INVALID_PASSWORD);
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    const user = await User.findById(req.session.user._id);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.redirect('/');
+  } catch (e) {
+    handleCustomDBError(e, res);
+  }
+};

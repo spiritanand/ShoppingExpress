@@ -19,6 +19,8 @@ const ERROR_MESSAGES = {
   NOT_LOGGED_IN: 'User not logged in',
   INVALID_USERNAME: 'Invalid username',
   INVALID_USERNAME_PASSWORD: 'Invalid username or password',
+  PASSWORDS_DO_NOT_MATCH: 'Passwords do not match',
+  INVALID_PASSWORD: 'Invalid password. Please try again.',
   // DATABASE_ERROR: 'Database error',
   // INVALID_REQUEST: 'Invalid request',
   // INVALID_INPUT: 'Invalid input',
