@@ -46,6 +46,8 @@
 									type = 'submit'
 							>Cancel
 							</button>
+
+							<%- include('../includes/csrfToken.ejs') %>
 						</form>
 					<% } else if (order.status === 'cancelled') { %>
 						<p class = "mb-4">Status: <span class = "bg-red-800 text-red-200 rounded p-2"
