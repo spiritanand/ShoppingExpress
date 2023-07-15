@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session);
 const csurf = require('csurf'); // csurf has been deprecated, but still works :)
-// Also, I could not get any other csrf package to work
+// Also, I could not get any other csrf package to work :X
 
 require('dotenv').config();
 
@@ -63,11 +63,11 @@ runMongo()
 
 // general middleware for storing user
 app.use(async (req, res, next) => {
-  res.locals.isUserLoggedIn = req?.session?.user;
   res.locals.isAdmin = req?.session?.user?.type === 'admin';
   res.locals.csrfToken = req.csrfToken();
 
   req.user = await User.findById(req?.session?.user?._id);
+  res.locals.isUserLoggedIn = Boolean(req.user);
 
   res.locals.path = req.path;
   next();

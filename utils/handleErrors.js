@@ -26,8 +26,8 @@ function handleCustomDBError(e, res) {
     handleUnauthenticatedUser(e, res);
   else if (
     e.message === ERROR_MESSAGES.PRODUCT_NOT_FOUND ||
-    ERROR_MESSAGES.ORDER_NOT_FOUND ||
-    ERROR_MESSAGES.RESOURCE_NOT_FOUND
+    e.message === ERROR_MESSAGES.ORDER_NOT_FOUND ||
+    e.message === ERROR_MESSAGES.RESOURCE_NOT_FOUND
   )
     handleResourceNotFound(e, res);
   else handleCustomError(e, res);

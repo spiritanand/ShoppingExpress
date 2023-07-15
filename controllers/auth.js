@@ -78,13 +78,6 @@ exports.postLogout = (req, res) => {
 };
 
 exports.getResetPassword = (req, res) => {
-  // const { oldPassword, newPassword, confirmPassword } = req.body;
-  //
-  // console.log({
-  //   oldPassword,
-  //   newPassword,
-  //   confirmPassword,
-  // });
   res.render('auth/reset-password', {
     title: 'Reset Password',
   });

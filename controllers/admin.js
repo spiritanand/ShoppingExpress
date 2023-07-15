@@ -1,6 +1,7 @@
 const Product = require('../models/product');
 const { ERROR_MESSAGES } = require('../constants/constants');
 const { handleCustomDBError } = require('../utils/handleErrors');
+const { removeSpaces } = require('../utils/sanitizeInput');
 
 exports.getAdminProducts = async (req, res) => {
   try {
@@ -24,17 +25,15 @@ exports.getAddProduct = (req, res) => {
 };
 
 exports.postAddProduct = async (req, res) => {
-  const { name, price, description, quantity, imageURL } = req.body;
+  const { _csrf, ...productInfo } = req.body;
+  removeSpaces(productInfo);
+
   const user = req?.user;
   const { _id: userID } = user;
 
   try {
     const product = new Product({
-      name,
-      price,
-      description,
-      quantity,
-      imageURL,
+      ...productInfo,
       userID,
     });
 
@@ -69,10 +68,13 @@ exports.getEditProduct = async (req, res) => {
 };
 
 exports.postEditProduct = async (req, res) => {
-  const { productID, ...updatedProduct } = req.body;
+  const { productID, _csrf, ...updatedProduct } = req.body;
+  removeSpaces(updatedProduct);
 
   try {
     const product = await Product.findById(productID);
+
+    if (!product) throw new Error(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
 
     if (product?.userID?.toString() !== req.session.user._id.toString())
       throw new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS);
