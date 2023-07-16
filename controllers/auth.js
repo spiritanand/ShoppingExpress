@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const { ERROR_MESSAGES } = require('../constants/constants');
-const { handleCustomDBError } = require('../utils/handleErrors');
 
 exports.getSignUp = (req, res) => {
   res.render('auth/signup', {
@@ -9,24 +8,34 @@ exports.getSignUp = (req, res) => {
   });
 };
 
-exports.postSignUp = async (req, res) => {
-  const { username, email, password, type } = req.body;
+exports.postSignUp = async (req, res, next) => {
+  try {
+    const { username, email, password, type } = req.body;
+    const avatar = req.file;
 
-  const hashedPassword = await bcrypt.hash(password, 12);
+    if (avatar && !avatar?.mimetype?.startsWith('image')) {
+      throw new Error(ERROR_MESSAGES.FILE_TYPE);
+    }
 
-  const user = new User({
-    username,
-    email,
-    password: hashedPassword,
-    type,
-  });
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-  await user.save();
+    const user = new User({
+      username,
+      email,
+      password: hashedPassword,
+      type,
+      avatar: avatar?.path,
+    });
 
-  req.session.user = user;
-  await req.session.save();
+    await user.save();
 
-  res.redirect('/');
+    req.session.user = user;
+    await req.session.save();
+
+    res.redirect('/');
+  } catch (e) {
+    next(e);
+  }
 };
 
 exports.getLogin = (req, res) => {
@@ -35,7 +44,7 @@ exports.getLogin = (req, res) => {
   });
 };
 
-exports.postLogin = async (req, res) => {
+exports.postLogin = async (req, res, next) => {
   try {
     const { username, password } = req.body;
 
@@ -45,8 +54,6 @@ exports.postLogin = async (req, res) => {
     if (!user && !email) {
       throw new Error(ERROR_MESSAGES.INVALID_USERNAME);
     }
-
-    console.log({ email });
 
     // Compare the password
     const isPasswordValid = await bcrypt.compare(
@@ -62,15 +69,15 @@ exports.postLogin = async (req, res) => {
     req.session.user = user || email;
 
     return res.redirect('/');
-  } catch (error) {
-    return handleCustomDBError(error, res);
+  } catch (e) {
+    return next(e);
   }
 };
 
 exports.postLogout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return handleCustomDBError(err, res);
+      throw new Error(err);
     }
 
     return res.redirect('/');
@@ -83,7 +90,7 @@ exports.getResetPassword = (req, res) => {
   });
 };
 
-exports.postResetPassword = async (req, res) => {
+exports.postResetPassword = async (req, res, next) => {
   try {
     const { oldPassword, newPassword, confirmPassword } = req.body;
 
@@ -105,6 +112,6 @@ exports.postResetPassword = async (req, res) => {
 
     res.redirect('/');
   } catch (e) {
-    handleCustomDBError(e, res);
+    next(e);
   }
 };

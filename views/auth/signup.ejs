@@ -5,7 +5,7 @@
 <%- include('../includes/navbar.ejs') %>
 <main class = "min-h-screen bg-gray-100 flex flex-col gap-16 p-8 sm:px-6 lg:px-8 mx-auto sm:w-full sm:max-w-md">
 	<h2 class = "text-center text-4xl font-extrabold text-gray-900">Sign Up</h2>
-	<form class = "mt-8" action = "#" method = "POST">
+	<form class = "mt-8" action = "/signup" method = "POST" enctype = 'multipart/form-data'>
 		<fieldset class = "rounded-md shadow-sm">
 			<div>
 				<label for = "email" class = "sr-only">Email</label>
@@ -35,7 +35,16 @@
 					   placeholder = "Password"
 				>
 			</div>
-			<div class = 'my-8'>
+			<div class = 'my-6'>
+				<label for = "image" class = 'text-gray-600'>Avatar</label>
+				<input id = "image" name = "image" type = "file" accept = "image/*"
+					   class = "appearance-none rounded-none relative block w-full px-3 py-2 placeholder-gray-500
+                        text-gray-900 focus:outline-none focus:ring-primary focus:border-primary
+                        focus:z-10 sm:text-sm mt-3"
+					   placeholder = "Password"
+				>
+			</div>
+			<div class = 'my-6'>
 				<label for = "type" class = 'text-gray-600'>
 					Type:
 				</label>

@@ -5,6 +5,8 @@ const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session);
 const csurf = require('csurf'); // csurf has been deprecated, but still works :)
 // Also, I could not get any other csrf package to work :X
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
 require('dotenv').config();
 
@@ -33,8 +35,19 @@ app.set('view engine', 'ejs');
 // To parse the body of incoming requests
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, 'uploads');
+  },
+  filename(req, file, cb) {
+    cb(null, `${uuidv4()}-${file.originalname}`);
+  },
+});
+app.use(multer({ storage }).single('image'));
+
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // session middleware
 app.use(
@@ -69,6 +82,7 @@ app.use(async (req, res, next) => {
 
   req.user = await User.findById(req?.session?.user?._id);
   res.locals.isUserLoggedIn = Boolean(req.user);
+  res.locals.avatar = req?.user?.avatar;
 
   res.locals.path = req.path;
   next();

@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       select: false,
     },
+    avatar: {
+      type: String,
+      default: 'uploads/eugene.jpeg',
+    },
     type: {
       type: String,
       enum: Object.values(USER_TYPE),
