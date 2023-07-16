@@ -21,15 +21,18 @@ const ERROR_MESSAGES = {
   INVALID_USERNAME_PASSWORD: 'Invalid username or password',
   PASSWORDS_DO_NOT_MATCH: 'Passwords do not match',
   INVALID_PASSWORD: 'Invalid password. Please try again.',
-  // DATABASE_ERROR: 'Database error',
-  // INVALID_REQUEST: 'Invalid request',
-  // INVALID_INPUT: 'Invalid input',
-  // DUPLICATE_ENTRY: 'Duplicate entry',
-  // OPERATION_NOT_ALLOWED: 'Operation not allowed',
+  FILE_TYPE: 'Invalid file type',
+};
+
+const ERROR_TITLE = {
+  INTERNAL_SERVER_ERROR: 'Internal Server Error',
+  UNPROCESSABLE_ENTITY: 'Unprocessable Entity',
+  UNAUTHORIZED: 'Unauthorized',
 };
 
 module.exports = {
   STATUS,
   USER_TYPE,
   ERROR_MESSAGES,
+  ERROR_TITLE,
 };

@@ -7,7 +7,7 @@ exports.handleCustomDBError = (e, res) => {
       renderErrorView(res, 500, ERROR_TITLE.INTERNAL_SERVER_ERROR, e.message);
       break;
     case ERROR_MESSAGES.FILE_TYPE:
-      renderErrorView(res, 422, ERROR_TITLE.UNPROCESSABLE, e.message);
+      renderErrorView(res, 422, ERROR_TITLE.UNPROCESSABLE_ENTITY, e.message);
       break;
     case ERROR_MESSAGES.INVALID_USERNAME:
     case ERROR_MESSAGES.UNAUTHORIZED_ACCESS:
