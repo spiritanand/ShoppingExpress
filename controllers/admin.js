@@ -1,9 +1,8 @@
 const Product = require('../models/product');
 const { ERROR_MESSAGES } = require('../constants/constants');
-const { handleCustomDBError } = require('../utils/handleErrors');
 const { removeSpaces } = require('../utils/sanitizeInput');
 
-exports.getAdminProducts = async (req, res) => {
+exports.getAdminProducts = async (req, res, next) => {
   try {
     const products = await Product.find({ userID: req.session.user._id });
 
@@ -12,7 +11,7 @@ exports.getAdminProducts = async (req, res) => {
       products,
     });
   } catch (e) {
-    handleCustomDBError(e, res);
+    next(e);
   }
 };
 
@@ -24,7 +23,7 @@ exports.getAddProduct = (req, res) => {
   });
 };
 
-exports.postAddProduct = async (req, res) => {
+exports.postAddProduct = async (req, res, next) => {
   const { _csrf, ...productInfo } = req.body;
   removeSpaces(productInfo);
 
@@ -41,11 +40,11 @@ exports.postAddProduct = async (req, res) => {
 
     res.redirect('/');
   } catch (e) {
-    handleCustomDBError(e, res);
+    next(e);
   }
 };
 
-exports.getEditProduct = async (req, res) => {
+exports.getEditProduct = async (req, res, next) => {
   const productID = req.params?.productID;
   const editMode = req.query?.edit === 'true';
 
@@ -63,11 +62,11 @@ exports.getEditProduct = async (req, res) => {
       editMode,
     });
   } catch (e) {
-    handleCustomDBError(e, res);
+    next(e);
   }
 };
 
-exports.postEditProduct = async (req, res) => {
+exports.postEditProduct = async (req, res, next) => {
   const { productID, _csrf, ...updatedProduct } = req.body;
   removeSpaces(updatedProduct);
 
@@ -85,11 +84,11 @@ exports.postEditProduct = async (req, res) => {
 
     res.redirect(`/products/${productID}`);
   } catch (e) {
-    handleCustomDBError(e, res);
+    next(e);
   }
 };
 
-exports.postDeleteProduct = async (req, res) => {
+exports.postDeleteProduct = async (req, res, next) => {
   const productID = req.body?.productID;
 
   try {
@@ -100,6 +99,6 @@ exports.postDeleteProduct = async (req, res) => {
 
     res.redirect('/admin/products');
   } catch (e) {
-    handleCustomDBError(new Error(ERROR_MESSAGES.UNAUTHORIZED_ACCESS), res);
+    next(e);
   }
 };

@@ -16,6 +16,7 @@ const { get404 } = require('./controllers/error');
 const runMongo = require('./utils/database');
 const User = require('./models/user');
 const { isAdmin, isLoggedIn } = require('./middlewares/isAuth');
+const { handleCustomDBError } = require('./utils/handleErrors');
 
 const app = express();
 const PORT = 8080;
@@ -78,5 +79,8 @@ app.use(authRoutes);
 app.use(publicRoutes);
 app.use(isLoggedIn, shopRoutes);
 app.use('/admin', isAdmin, adminRoutes);
-
+// catch all routes
 app.use(get404);
+app.use((e, req, res, next) => {
+  handleCustomDBError(e, res);
+});

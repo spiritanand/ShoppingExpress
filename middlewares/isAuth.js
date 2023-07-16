@@ -17,9 +17,10 @@ exports.isAdmin = (req, res, next) => {
 exports.isLoggedIn = (req, res, next) => {
   try {
     if (!req?.user) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+    if (!req.user?.cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
     next();
-  } catch (err) {
-    handleCustomDBError(err, res);
+  } catch (e) {
+    next(e);
   }
 };

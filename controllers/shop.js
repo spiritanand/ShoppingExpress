@@ -2,12 +2,11 @@ const Product = require('../models/product');
 const User = require('../models/user');
 const { ERROR_MESSAGES, STATUS } = require('../constants/constants');
 const Order = require('../models/order');
-const { handleCustomDBError } = require('../utils/handleErrors');
 
 /**
  * Shows the homepage
  */
-exports.getCart = async (req, res) => {
+exports.getCart = async (req, res, next) => {
   try {
     const user = await User.findById(req.session?.user?._id)
       .populate('cart.productID')
@@ -23,55 +22,45 @@ exports.getCart = async (req, res) => {
       totalPrice: user.totalPrice,
     });
   } catch (e) {
-    handleCustomDBError(e, res);
+    next(e);
   }
 };
 
-exports.postAddToCart = async (req, res) => {
+exports.postAddToCart = async (req, res, next) => {
   const productID = req.body?.productID;
 
   try {
-    const cart = await req.user?.cart;
-
-    if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
-
     await req.user.addToCart(productID);
 
     res.redirect('/cart');
   } catch (e) {
-    handleCustomDBError(e, res);
+    next(e);
   }
 };
 
-exports.postDecreaseProductFromCart = async (req, res) => {
+exports.postDecreaseProductFromCart = async (req, res, next) => {
   const productID = req.body?.productID;
 
   try {
     const cart = await req.user?.cart;
-
-    if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
     await req.user.decreaseFromCart(productID);
 
     res.redirect('/cart');
   } catch (e) {
-    handleCustomDBError(e, res);
+    next(e);
   }
 };
 
-exports.postRemoveProductFromCart = async (req, res) => {
+exports.postRemoveProductFromCart = async (req, res, next) => {
   const productID = req.body?.productID;
 
   try {
-    const cart = await req.user?.cart;
-
-    if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
-
     await req.user.removeFromCart(productID);
 
     res.redirect('/cart');
   } catch (e) {
-    handleCustomDBError(e, res);
+    next(e);
   }
 };
 
@@ -82,7 +71,7 @@ exports.getCheckout = (req, res) => {
   });
 };
 
-exports.getOrders = async (req, res) => {
+exports.getOrders = async (req, res, next) => {
   try {
     const { _id } = req.user;
 
@@ -93,19 +82,17 @@ exports.getOrders = async (req, res) => {
       orders,
     });
   } catch (e) {
-    handleCustomDBError(e, res);
+    next(e);
   }
 };
 
-exports.postCheckout = async (req, res) => {
+exports.postCheckout = async (req, res, next) => {
   try {
     const user = await User.findById(req.session?.user?._id)
       .populate('cart.productID')
       .exec();
 
     const cart = user?.cart;
-
-    if (!cart) throw new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
 
     const { _id } = user;
 
@@ -126,11 +113,11 @@ exports.postCheckout = async (req, res) => {
 
     res.redirect('/orders');
   } catch (e) {
-    handleCustomDBError(e, res);
+    next(e);
   }
 };
 
-exports.postCancelOrder = async (req, res) => {
+exports.postCancelOrder = async (req, res, next) => {
   const orderID = req.body?.orderID;
   try {
     const order = await Order.cancel(orderID);
@@ -141,6 +128,6 @@ exports.postCancelOrder = async (req, res) => {
 
     res.redirect('/orders');
   } catch (e) {
-    handleCustomDBError(e, res);
+    next(e);
   }
 };
