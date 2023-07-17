@@ -125,6 +125,7 @@ const userSchema = new mongoose.Schema(
 );
 
 // Validate products in the cart and calculate the total price
+// eslint-disable-next-line func-names
 userSchema.pre('save', async function () {
   await this.calculateTotalPrice();
 });

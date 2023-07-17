@@ -42,8 +42,6 @@ exports.postDecreaseProductFromCart = async (req, res, next) => {
   const productID = req.body?.productID;
 
   try {
-    const cart = await req.user?.cart;
-
     await req.user.decreaseFromCart(productID);
 
     res.redirect('/cart');

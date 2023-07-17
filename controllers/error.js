@@ -20,7 +20,7 @@ exports.get404 = (req, res) => {
 
 exports.handleCustomError = (e, res, status, title) => {
   // eslint-disable-next-line no-console
-  console.log('Error:', e?.message);
+  console.error('Error:', e?.message);
 
   renderErrorView(res, status, title, e.message);
 };
