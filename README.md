@@ -8,7 +8,6 @@ e-commerce platform where users can browse and purchase products.
 To run the Shopping Express project locally, please ensure you have the following prerequisites:
 
 - Node.js installed (version 16 or higher)
-- MongoDB installed (version 5.6.0 or higher)
 
 Follow these steps to set up and run the project:
 
