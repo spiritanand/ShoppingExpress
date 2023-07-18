@@ -62,13 +62,6 @@ exports.postRemoveProductFromCart = async (req, res, next) => {
   }
 };
 
-exports.getCheckout = (req, res) => {
-  res.render('shop/checkout', {
-    title: 'Checkout',
-    path: '/checkout',
-  });
-};
-
 exports.getOrders = async (req, res, next) => {
   try {
     const { _id } = req.user;

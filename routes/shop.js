@@ -19,7 +19,6 @@ router.post('/cart/add', postAddToCart);
 router.post('/cart/decrease', postDecreaseProductFromCart);
 router.post('/cart/remove', postRemoveProductFromCart);
 
-router.get('/checkout', getCheckout);
 router.post('/checkout', postCheckout);
 
 router.get('/orders', getOrders);
