@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default: 'uploads/eugene.jpeg',
+      default: 'uploads/joker.jpeg',
     },
     type: {
       type: String,
